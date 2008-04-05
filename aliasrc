@@ -1,0 +1,79 @@
+#!/bin/sh
+
+###-------------------###
+### Alias definitions ###
+###-------------------###
+
+# Debian
+alias apt-file-etch='apt-file --sources-list /etc/apt/sources.list.d/etch.list'
+alias apt-file='apt-file --sources-list /etc/apt/sources.list.d/lenny.list'
+alias apt-file-sid='apt-file --sources-list /etc/apt/sources.list.d/unstable.list'
+alias api='time sudo aptitude install'
+alias aps='aptitude search'
+alias apsh='aptitude show'
+alias app='apt-cache policy'
+# alias apt-cache='sudo apt-cache'
+# alias apt-get='sudo apt-get'
+# alias aptitude='sudo aptitude'
+alias apupdate='time sudo aptitude update'
+alias apupgrade='time sudo aptitude safe-upgrade'
+alias apdupgrade='time sudo aptitude dist-upgrade'
+
+# Shell
+alias f='find |grep'
+# alias grep='grepor'
+# alias grep='grep -ior'
+alias grep='grep --col -i'
+alias hoy='date +%F'
+alias locate='locate -i'
+alias mem="free -m"
+alias qiv='XLIB_SKIP_ARGB_VISUALS=1 qiv'
+alias rm='rm -i'
+alias mv='mv -i'
+# alias tv='DISPLAY=:1.1'
+# grml's clean-prompt alias
+alias 0 &>/dev/null || functions 0 &>/dev/null || alias 0='return 0'
+alias rp='RPROMPT_ENABLED=1'
+alias nrp='unset RPROMPT; unset RPROMPT_ENABLED'
+alias cdlocate='locate -i -d /var/lib/cds.db'
+alias lastlogs='find ~/.purple/logs -type f | grep -v system | xargs ls -ltr | tail'
+alias confcat="sed '/^\s*\([#;\"].*\)\?$/d'"
+
+## Manpage havoc
+# alias man='man -P vi-pager.sh'
+alias man-darwin="MANPATH=/home/redondos/.man/Darwin-8.0.1-ppc man"
+alias man-freebsd="MANPATH=/home/redondos/.man/FreeBSD-7-current/man man"
+alias man-hp-ux="MANPATH=/home/redondos/.man/HP-UX-11.22 man"
+alias man-netbsd="MANPATH=/home/redondos/.man/NetBSD-3.0 man"
+alias man-openbsd-3.9="MANPATH=/home/redondos/.man/OpenBSD-3.9 man"
+alias man-opendarwin="MANPATH=/home/redondos/.man/OpenDarwin-7.2.1 man"
+alias man-plan9="MANPATH=/home/redondos/.man/plan9 man"
+alias man-redhat="MANPATH=/home/redondos/.man/RedHat-9-i386 man"
+alias man-sunos="MANPATH=/home/redondos/.man/SunOS-5.9 man"
+alias man-suse="MANPATH=/home/redondos/.man/SuSE-8.2-i386 man"
+alias man-unix="MANPATH=/home/redondos/.man/v7man man"
+
+if [ "$TERM" != "dumb" ]; then
+	function ls() { command ls --color=always $*; }
+fi
+
+## ls aliases
+eval "`dircolors -b`"
+# alias l='ls -CFh'
+alias dir='ls --format=vertical'
+alias l='ls -lhF'
+alias la='ls -AhF'
+alias ll='ls -lhFa'
+alias lla='ls -ld .*'
+alias ls='ls -F'
+alias lsa='ls -d .*'
+alias vdir='lsor=auto --format=long'
+
+## directory aliases
+[ -d "$HOME/downloads" ] 	&& hash -d downloads="$HOME/downloads"
+[ -d "$HOME/movies" ] 		&& hash -d movies="$HOME/movies"
+[ -d "$HOME/mp3" ] 		&& hash -d mp3="$HOME/mp3"
+[ -d "$HOME/tmp" ] 		&& hash -d tmp="$HOME/tmp"
+[ -d "$HOME/.irss"ilogs ] 	&& hash -d irc="$HOME/.irssi/logs"
+
+# vim: syntax=sh

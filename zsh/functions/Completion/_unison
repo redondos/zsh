@@ -1,0 +1,6 @@
+#compdef unison
+
+r=(~/.unison/*.prf)
+compadd ${${r%.prf}##*/}
+
+compdef _unison unison
