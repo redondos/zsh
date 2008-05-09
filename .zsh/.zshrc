@@ -28,10 +28,19 @@ umask 0027
 alias -g L='|less'
 alias -g shh='&> /dev/null '
 alias lsd='ls -ld *(-/DN)'
+alias histcount='history -i 1 | awk "{a[\$2]++} END {for(date in a) print date, a[date]}" | sort -nk2'
 functions -u help-zshglob
 
 [[ -r ~/.envrc ]] && . ~/.envrc
 [[ -d ~/.zsh_functions.d ]] && fpath=(~/.zsh_functions.d $fpath)
+[[ -d ~/.zsh/functions ]] && for dir in ~/.zsh/functions/*(/); do nfpath+=($dir); done
+fpath=($nfpath $fpath)
+
+## Colorize stderr
+# http://gentoo-wiki.com/TIP_Advanced_zsh_Completion 
+#exec 2>>(while read line; do
+#    print '\e[91m'${(q)line}'\e[0m' > /dev/tty; 
+#done &)
 
 ## Only unique entries
 typeset -U path
@@ -42,9 +51,9 @@ typeset -U path
 
 zmodload -i zsh/complist
 autoload -Uz compinit
-compinit
+compinit -C
 
-## http://zshwiki.org/home/examples/compquickstart
+### http://zshwiki.org/home/examples/compquickstart
 # If you want zsh's completion to pick up new commands in $path automatically
 # comment out the next line and un-comment the following 5 lines
 zstyle ':completion:::::' completer _complete _approximate
@@ -60,10 +69,63 @@ zstyle ':completion:*:corrections' format "- %d - (errors %e})"
 zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:manuals' separate-sections true
+
+## Always use menu selection
+## select=<N>
 zstyle ':completion:*' menu select
+
 zstyle ':completion:*' verbose yes
 
-## Random stuff
+### $hosts completion
+## /usr/share/doc/zsh/examples/ssh_completion.gz
+## Including IP addresses
+hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})
+## Excluding IP addresses
+# hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})
+## For every command accepting hosts
+zstyle ':completion:*:hosts' hosts $hosts
+## Only for SSH
+zstyle ':completion:*:complete:ssh:*:hosts' hosts $hosts
+
+### http://ft.bewatermyfriend.org/
+## manual pages are sorted into sections
+zstyle ':completion:*:manuals'              separate-sections true
+zstyle ':completion:*:manuals.(^1*)'        insert-sections   true
+
+## Tolerate errors
+zstyle -e ':completion:*:approximate:*'     max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
+
+## functions starting with '_' are completion functions by convention
+## these are not supposed to be called by hand. no completion needed.
+zstyle ':completion:*:(functions|parameters|association-keys)' \
+                                                            ignored-patterns '_*'
+## normally I don't want to complete *.o and *~, so, I'll ignore them
+## update: these patterns are not ignored for rm, since i might want to delete those files
+zstyle ':completion:*:*:(^rm):*:*files'                 ignored-patterns '*?.o' '*?\~'
+
+## vi(m) can ignore even more files
+zstyle ':completion:*:*:(^rm):*:*files'                 ignored-patterns '*?.o' '*?\~'
+
+## vi(m) can ignore even more files
+zstyle ':completion::*:(vi|vim):*'                      ignored-patterns '*?.(lo|so|la|o)'
+
+## enable verbose completion; descriptions like: '-a  -- list entries starting with .'
+zstyle ':completion:*'                                  verbose yes
+
+## if i have 'rm file0' on the commandline
+## i don't need "file0" in possible completions
+zstyle ':completion:*:(rm|kill):*'                      ignore-line yes
+
+## $hosts for <tab> completing hostnames
+zstyle ':completion:*:(nc|ping|ssh|nmap|*ftp|telnet|finger):*' \
+                                                            hosts $hosts
+
+## i like kill <tab>, but i want more processes...
+zstyle ':completion:*:processes'                        command 'ps --forest -A -o pid,user,cmd'
+zstyle ':completion:*:*:kill:*:processes'               sort false
+zstyle ':completion:*:processes-names'                  command 'ps c -u ${USER} -o command | uniq'
+
+### Random stuff
 zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
@@ -75,6 +137,22 @@ if [[ $HOSTNAME == refinery* ]]; then
 fi
 ## In case AUTO_CD is not enabled
 # compctl -/ cd
+
+## Aptitude 4.6 includes many aptitude-* commands that we don't want to be completed.
+# zstyle ':completion:*:complete:-command-::commands'       ignored-patterns 'aptitude-*'
+# zstyle ':completion:::::'                                 completer _complete _ignored _approximate
+
+## Enable/disable globdots for completion
+# _comp_options=(${_comp_options//*globdots/} noglobdots)
+# _comp_options=(${_comp_options//*globdots/} globdots)
+
+## Different separator
+zstyle ':completion:*' list-separator --\>
+
+## kill
+# http://madism.org/~madcoder/dotfiles/zsh/40_completion
+zstyle ':completion:*:processes' command 'ps -au$USER -o pid,time,cmd|grep -v "ps -au$USER -o pid,time,cmd"'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)[ 0-9:]#([^ ]#)*=01;30=01;31=01;38'
 
 #####################################################################
 ### compinstall
@@ -93,13 +171,13 @@ fi
 #####################################################################
 
 ## zkbd helps defining human-friendly keymap names by sourcing a properly named
-## file from ~/.zkbd
+## file from ~/.zsh/zkbd
 
 ## A file is created by calling zkbd if there doesn't exist one for the current
 ##triple: $TERM-$VENDOR-$OSTYPE
 
-autoload zkbd && [[ ! -f ~/.zkbd/$TERM-$VENDOR-$OSTYPE ]] && zkbd
-[[ -f ~/.zkbd/$TERM-$VENDOR-$OSTYPE ]] && source ~/.zkbd/$TERM-$VENDOR-$OSTYPE || source ~/.zkbd/xterm-$VENDOR-$OSTYPE
+autoload zkbd && [[ ! -f ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE ]] && zkbd
+[[ -f ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE ]] && source ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE || source ~/.zsh/zkbd/xterm-$VENDOR-$OSTYPE
 
 ## Emacs mode
 bindkey -e
@@ -127,7 +205,12 @@ bindkey -e
 [[ -n ${key[Down]}      ]]  &&  bindkey "${key[Down]}"      down-line-or-history
 [[ -n ${key[Left]}      ]]  &&  bindkey "${key[Left]}"      backward-char
 [[ -n ${key[Right]}     ]]  &&  bindkey "${key[Right]}"     forward-char
+
+## Kill that line
 bindkey '^u'    backward-kill-line
+
+## Kill that word
+bindkey '^\\' backward-kill-word
 
 ## Turn prediction on/off
 if autoload predict-on ; then
@@ -137,8 +220,8 @@ if autoload predict-on ; then
     bindkey '^X^T^F' predict-off
 fi
 
-## meta-y inserts the latest modified file the the command line
-bindkey -s '^[y' '*(.om[1])\t'
+## ctrl-x, f inserts the latest modified file the the command line
+bindkey -s '^xf' '*(.om[1])\t'
 
 ## exec_on_xclip, by ft
 ## http://bewatermyfriend.org/posts/2007/05-17.17-57-48-computer.html
@@ -191,32 +274,149 @@ bindkey '^xp' history-beginning-search-backward
 bindkey '^xn' history-beginning-search-forward
 
 ## vi-${direction}-word
-bindkey '\eB' vi-backward-word
-bindkey '\eF' vi-forward-word
+# bindkey '\eB' vi-backward-word
+# bindkey '\eF' vi-forward-word
 
 ## Better handling of multi-line commands than push-line, especially in the
 ## buffer stack
 bindkey '\eq' push-line-or-edit
 
-## Remove words readline-style
-readline-kill-word() { 
-    typeset WORDCHARS=${WORDCHARS//[\/.]}
-    zle kill-word
-} 
-zle -N readline-kill-word
-bindkey '\eD' readline-kill-word
+## Function that performs commands similar to the way readline does
+## That is, removing some characters from $WORDCHARS
+readline-command() {
+    typeset WORDCHARS=${WORDCHARS//[\/.:;-]}
+    zle ${WIDGET#readline-}
+}
 
-readline-backward-kill-word() { 
-    typeset WORDCHARS=${WORDCHARS//[\/.]}
-    zle backward-kill-word
-} 
-zle -N readline-backward-kill-word
-bindkey '\eW' readline-backward-kill-word
-bindkey '\ew' backward-kill-word
+## readline-kill-word
+zle -N readline-kill-word readline-command
+bindkey '\ed' readline-kill-word
+bindkey '\eD' kill-word
+
+## readline-backward-kill-word
+zle -N readline-backward-kill-word readline-command
+bindkey '\ew' readline-backward-kill-word
+bindkey '^w' readline-backward-kill-word
+bindkey '\eW' backward-kill-word
+
+## readline-forward-word
+zle -N readline-forward-word readline-command
+bindkey '\ef' readline-forward-word
+bindkey '\eF' forward-word
+
+## readline-backward-word
+zle -N readline-backward-word readline-command
+bindkey '\eb' readline-backward-word
+bindkey '\eB' backward-word
 
 ## Enter directories in menu selection, from zshguide.
-# bindkey -M menuselect '^o' accept-and-infer-next-history
+bindkey -M menuselect '^o' accept-and-infer-next-history
 
+## Easier to navigate menus
+accept-and-execute-line() { zle accept-line ; zle accept-line }
+zle -N accept-and-execute-line
+# bindkey -M menuselect '^M' accept-and-execute-line
+
+## Completion help
+bindkey '^xh' _complete_help
+
+## Manual completion calls
+bindkey '^X^R' _read_comp
+
+## delete-word-alnum
+delete-word-alnum() { 
+    typeset WORDCHARS=
+    zle delete-word
+}
+zle -N delete-word-alnum
+# bindkey "\ed" delete-word-alnum
+
+## copy-prev-word
+## default is \e^_ (ctrl+alt+shift+-)
+bindkey '\e=' copy-prev-word
+
+## zsticky
+## Bart Schaefer, <080113000048.ZM15017@torch.brasslantern.com>
+autoload -U zsticky
+
+## Fast directory navigation
+# http://blog.orebokech.com/2008/03/fast-directory-navigation.html
+function up-one-dir { set -E; pushd ..; set +E; zle redisplay; zle -M `pwd` }
+function back-one-dir { set -E; popd; set +E; zle redisplay; zle -M `pwd` }
+zle -N up-one-dir
+zle -N back-one-dir
+bindkey "^[-" up-one-dir
+bindkey "^[=" back-one-dir
+
+## expand-dot
+# http://rusmafia.org/linux/zsh-parent-dir-expand
+# it messes up incremental completion
+# autoload -U expand-dot
+# zle -N expand-dot
+# bindkey . expand-dot
+
+## narrow-to-region wrapper
+# Mikael Magnusson <mikachu@gmail.com>
+# <237967ef0804021119l400b2305sbc9e5391a380e616@mail.gmail.com>
+
+zle -N _narrow_to_region_marked
+bindkey "^X^I"    _narrow_to_region_marked
+autoload -U narrow-to-region
+function _narrow_to_region_marked()
+{
+  local right
+  local left
+  if ((MARK == 0)); then
+    zle set-mark-command
+  fi
+  if ((MARK < CURSOR)); then
+    left="$LBUFFER[0,$((MARK-CURSOR-1))]"
+    right="$RBUFFER"
+  else
+    left="$LBUFFER"
+    right="$BUFFER[$((MARK+1)),-1]"
+  fi
+  narrow-to-region -p "$left>>|" -P "|<<$right"
+}
+
+### some scripts from either of these three (who copied from who?)
+# http://wael.nasreddine.com/cgi-bin/viewvc.cgi/wael/trunk/etc/.zsh/zle?revision=628&view=markup&sortby=author
+# http://hg.codemac.net/config/
+# git://github.com/gigamo/config.git
+## bracket_automatcher
+bracket_automatcher() {
+    zle self-insert
+    zle vi-backward-char
+    zle vi-match-bracket
+    zle -R
+    sleep 0.2
+    zle vi-match-bracket
+    zle forward-char
+}
+zle -N bracket_automatcher
+bindkey ']' bracket_automatcher
+bindkey '}' bracket_automatcher
+bindkey ')' bracket_automatcher
+#
+## clear-bottom
+clear-screen-bottom () {
+    echo -n "\033[2J\033[400H"
+    builtin zle .redisplay
+}
+zle -N clear-screen-bottom
+bindkey "^L" clear-screen-bottom
+
+## expand-or-complete-prefix is much cooler
+bindkey '^I' expand-or-complete-prefix
+
+## Cycle in reverse with meta-tab
+bindkey '\e^I' reverse-menu-complete
+
+## ctrl-o to browse directory hierarchies
+bindkey  -M  menuselect  '^o'  accept-and-infer-next-history
+
+## _email_addresses from lbdbq
+autoload -U _email-lbdbq
 #####################################################################
 ### Prompt and terminal title
 #####################################################################
@@ -239,7 +439,7 @@ promptinit
 # PROMPT
 
 # [[ $HOSTNAME = refinery* ]] && prompt gentoo || source ~/.zsh/prompt-$HOSTNAME
-source ~/.zsh/prompt-gentoo
+source ~/.zsh/functions/Prompts/gentoo
 
 ###
 # RPROMPT
@@ -254,7 +454,8 @@ RPROMPT_DATETIME=(\[%{${fg[yellow]}%}${^RPROMPT_DATETIME}%{${fg[default]}%}\])
 # Exit code if != 0
 RPROMPT_EXITCODE="%(?..%{${fg[red]}%}(%?%)%{${fg[default]}%} )"
 # Path
-RPROMPT_PATH="%{${fg[cyan]}%}%~%{${fg[default]}%} "
+# this is too damn long!
+# RPROMPT_PATH="%{${fg[cyan]}%}%/%{${fg[default]}%} "
 
 function title {
     if [[ $TERM == screen* ]]; then
@@ -280,7 +481,7 @@ function precmd {
 precmd() {
     ###
     # Terminal and screen title
-    local termtitle RPROMPT_HISTEVENT
+    local termtitle RPROMPT_HISTEVENT GIT_BRANCH
 
     ## Changing IFS breaks a few things otherwise, especially clear-zle-screen
     IFS=$' \t\n'
@@ -306,13 +507,18 @@ precmd() {
         done
 
         # Display history event number every 10 commands.
-        if (($(print -P ${:-%\!})%10==0)); then
-            RPROMPT_HISTEVENT="[%{${fg[blue]}%}%!%{${fg[default]}%}] "
-        else
-            unset RPROMPT_HISTEVENT
+        # it got boring after a while../.
+        # if (($(print -P ${:-%\!})%10==0)); then
+        #     RPROMPT_HISTEVENT="[%{${fg[blue]}%}%!%{${fg[default]}%}] "
+        # else
+        #     unset RPROMPT_HISTEVENT
+        # fi
+
+        if [[ -d .git ]]; then
+            GIT_BRANCH="%{${fg[green]}%}{${$(git-symbolic-ref HEAD 2>/dev/null)#refs/heads/}}%{${fg[default]}%} "
         fi
 
-        RPROMPT="${RPROMPT_HISTEVENT}${RPROMPT_EXITCODE}${RPROMPT_PATH}${RPROMPT_DATETIME[1]}"
+        RPROMPT="${GIT_BRANCH}${RPROMPT_HISTEVENT}${RPROMPT_EXITCODE}${RPROMPT_PATH}${RPROMPT_DATETIME[1]}"
     fi
 
     ## Show running jobs
@@ -320,10 +526,12 @@ precmd() {
     
 }
 
+[ -e ~/.zsh/prompt-madduck ] && . ~/.zsh/prompt-madduck
 ###
 # preexec()
 
 preexec() {
+## Deprecated
     local escape_seq
     escape_seq="("$'\a|\b|\e|\f|\n|\r|\t|\v'"|\\a|\\b|\\c|\\e|\\f|\\n|\\r|\\t|\\v)"
     case "$TERM" in
@@ -346,6 +554,7 @@ preexec() {
 }
 
 function preexec {
+## Deprecated
   emulate -L zsh
   local -a cmd; cmd=(${(z)1})
   title $cmd[1]:t "$cmd[2,-1]"
@@ -380,8 +589,9 @@ preexec() {
         exec|sudo) shift cmd
             # If the command is 'exec', drop that, because
             # we'd rather just see the command that is being
-            ;& 
             # exec'd. Note the ;& to fall through the next entry.
+            ;& 
+        *=*) shift cmd;&
         *)  title $cmd[1]:t "$termtitle $cmd[*]"    # Starting a new job.
             ;;
         esac
@@ -404,6 +614,21 @@ ttyctl -f
 autoload zmv
 alias zmv='noglob zmv'
 alias mmv='noglob zmv -W'
+
+## nohup-alike function
+autoload dehup
+
+## dircolors
+# Orange dirs, 2008-04-13, redondos
+# Good for xterm
+# No good for urxvt, orange not available
+# eval $(dircolors =(print "${$(dircolors --print-database)//DIR ?????/DIR 38;5;202}"))
+
+## run-help-sudo
+# 2008-14-21, me
+# when calling "sudo cmd", run-help will look for a function called run-help-$1
+# and use it if available, passing the arguments shifted to the left
+run-help-sudo() { man $1; }
 
 #####################################################################
 ### Parameters
@@ -436,7 +661,7 @@ DIRSTACKSIZE=50
 LOGCHECK=20
 
 ## Print $TIMEFMT if command's combined execution time is greater than this value.
-REPORTTIME=60
+REPORTTIME=5
 
 ## Report login activity in $WATCHFMT
 watch=(notme)
@@ -453,127 +678,18 @@ watch=(notme)
 setopt AUTO_CD
 
 ## Make cd push the old directory onto the directory stack.
-setopt AUTO_PUSHD
-
-## Expand directory expressions as if they all started with ~
-setopt CDABLE_VARS
-
-## Don't push multiple copies of the same  directory
-setopt PUSHD_IGNORE_DUPS
-
-##---------------------------
-## Completion
-##---------------------------
-
-## Switch between possible completions after an additional TAB.
-## (default, replaced by MENU_COMPLETE)
-# setopt AUTO_MENU
-
-## Append a slash to autocompleted parameters that correspond to directories.
-setopt AUTO_PARAM_SLASH
-
-## Remove added space after completing a parameter and then entering a
-## character that needs to be inside the parameter, e.g. `:'.
-setopt AUTO_PARAM_KEYS
-
-## Remove trailing slashes if they aren't relevant to the command executed.
-## (set by default)
-unsetopt AUTO_REMOVE_SLASH
-
-## Don't complete aliases using the expanded command.
-# setopt COMPLETE_ALIASES
-
-## Complete in middle of a word without considering the full string.
-setopt COMPLETE_IN_WORD
-
-## Complete non-ambiguous prefix/suffix first, then display the ambiguities
-## after another function call.
-setopt LIST_AMBIGUOUS
-
-## Switch between possible completions, immediately.
-setopt MENU_COMPLETE
-
-##---------------------------
-## Expansion and Globbing
-##---------------------------
-
-## Substitute globs inside variables (like in sh): foo=*; print $foo
-# setopt GLOB_SUBST
-
-## `@', `*', `+', `?' and `!' are special in pattern matching
-setopt KSH_GLOB
-
-## Non-matching globs as printed as-is
-setopt NO_NOMATCH
-
-## Remove non-matching globs from expressions with multiple globs
-## This overrides NOMATCH, so I don't like it.
-# setopt CSH_NULL_GLOB
-
-## Print blank lines instead of globs/error when no matches are found
-# setopt NULL_GLOB
-
-## Allow `#', `~' and `^' to be treated as part of patterns
-setopt EXTENDED_GLOB
-
-## Warn when a global variable is created inside a function (override with
-## typeset -g)
-setopt WARN_CREATE_GLOBAL
-
-##---------------------------
-## History
-##---------------------------
-
-## Append to history instead of replacing
-setopt APPEND_HISTORY
-
-## Append to history in real time
-setopt INC_APPEND_HISTORY
-
-## Read from history file in real time
-setopt SHARE_HISTORY
-
-## Ignore duplicate history entries
-setopt HIST_IGNORE_ALL_DUPS
-
-## Remove useless blanks from history 
-setopt HIST_REDUCE_BLANKS
-
-## Add date and duration of each command to history file
-setopt EXTENDED_HISTORY
-
-##---------------------------
-## Initialisation
-##---------------------------
-
-##---------------------------
-## Input/Output
-##---------------------------
-
-## Don't truncate existing files
-setopt NO_CLOBBER
-
-## Correct spelling of commands
-setopt CORRECT
-
-## Correct all spelling mistakes
-# setopt CORRECT_ALL
-
-## Allow comments even in interactive shells.
-setopt INTERACTIVE_COMMENTS
-
-## Allow single quotes inside single quotes: ''
-setopt RC_QUOTES
-
-##---------------------------
-## Job Control
-##---------------------------
-
 ## Don't send SIGHUP to bg jobs when the shell exits
 # setopt NO_NOHUP
 
 ## Background jobs notify its status immediately
 setopt NOTIFY
+
+##---------------------------
+## Expansion and globbing
+##---------------------------
+
+## Extended globbing
+setopt EXTENDED_GLOB
 
 ##---------------------------
 ## Prompting
