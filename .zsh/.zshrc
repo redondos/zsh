@@ -678,6 +678,45 @@ watch=(notme)
 setopt AUTO_CD
 
 ## Make cd push the old directory onto the directory stack.
+setopt AUTO_PUSHD
+
+## Expand directory expressions as if they all started with ~
+setopt CDABLE_VARS
+
+## Don't push multiple copies of the same  directory
+setopt PUSHD_IGNORE_DUPS
+
+##---------------------------
+## Completion
+##---------------------------
+
+## Switch between possible completions after an additional TAB.
+## (default, replaced by MENU_COMPLETE)
+# setopt AUTO_MENU
+
+## Append a slash to autocompleted parameters that correspond to directories.
+setopt AUTO_PARAM_SLASH
+
+## Remove added space after completing a parameter and then entering a
+## character that needs to be inside the parameter, e.g. `:'.
+setopt AUTO_PARAM_KEYS
+
+## Remove trailing slashes if they aren't relevant to the command executed.
+## (set by default)
+unsetopt AUTO_REMOVE_SLASH
+
+## Don't complete aliases using the expanded command.
+# setopt COMPLETE_ALIASES
+
+## Complete in middle of a word without considering the full string.
+setopt COMPLETE_IN_WORD
+
+## Complete non-ambiguous prefix/suffix first, then display the ambiguities
+## after another function call.
+setopt LIST_AMBIGUOUS
+
+## Switch between possible completions, immediately.
+setopt MENU_COMPLETE
 ## Don't send SIGHUP to bg jobs when the shell exits
 # setopt NO_NOHUP
 
@@ -685,11 +724,86 @@ setopt AUTO_CD
 setopt NOTIFY
 
 ##---------------------------
-## Expansion and globbing
+## Expansion and Globbing
 ##---------------------------
 
-## Extended globbing
+## Substitute globs inside variables (like in sh): foo=*; print $foo
+# setopt GLOB_SUBST
+
+## `@', `*', `+', `?' and `!' are special in pattern matching
+setopt KSH_GLOB
+
+## Non-matching globs as printed as-is
+setopt NO_NOMATCH
+
+## Remove non-matching globs from expressions with multiple globs
+## This overrides NOMATCH, so I don't like it.
+# setopt CSH_NULL_GLOB
+
+## Print blank lines instead of globs/error when no matches are found
+# setopt NULL_GLOB
+
+## Allow `#', `~' and `^' to be treated as part of patterns
 setopt EXTENDED_GLOB
+
+## Warn when a global variable is created inside a function (override with
+## typeset -g)
+setopt WARN_CREATE_GLOBAL
+
+##---------------------------
+## History
+##---------------------------
+
+## Append to history instead of replacing
+setopt APPEND_HISTORY
+
+## Append to history in real time
+setopt INC_APPEND_HISTORY
+
+## Read from history file in real time
+setopt SHARE_HISTORY
+
+## Ignore duplicate history entries
+setopt HIST_IGNORE_ALL_DUPS
+
+## Remove useless blanks from history 
+setopt HIST_REDUCE_BLANKS
+
+## Add date and duration of each command to history file
+setopt EXTENDED_HISTORY
+
+##---------------------------
+## Initialisation
+##---------------------------
+
+##---------------------------
+## Input/Output
+##---------------------------
+
+## Don't truncate existing files
+setopt NO_CLOBBER
+
+## Correct spelling of commands
+setopt CORRECT
+
+## Correct all spelling mistakes
+# setopt CORRECT_ALL
+
+## Allow comments even in interactive shells.
+setopt INTERACTIVE_COMMENTS
+
+## Allow single quotes inside single quotes: ''
+setopt RC_QUOTES
+
+##---------------------------
+## Job Control
+##---------------------------
+
+## Don't send SIGHUP to bg jobs when the shell exits
+# setopt NO_NOHUP
+
+## Background jobs notify its status immediately
+setopt NOTIFY
 
 ##---------------------------
 ## Prompting
