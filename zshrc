@@ -56,7 +56,7 @@ compinit -C
 ### http://zshwiki.org/home/examples/compquickstart
 # If you want zsh's completion to pick up new commands in $path automatically
 # comment out the next line and un-comment the following 5 lines
-# zstyle ':completion:::::' completer _complete _approximate
+zstyle ':completion:::::' completer _complete _approximate
 _force_rehash() {
   (( CURRENT == 1 )) && rehash
   return 1 # Because we didn't really complete anything
@@ -69,13 +69,17 @@ zstyle ':completion:*:corrections' format "- %d - (errors %e})"
 zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:manuals' separate-sections true
+
+## Always use menu selection
+## select=<N>
 zstyle ':completion:*' menu select
+
 zstyle ':completion:*' verbose yes
 
 ### $hosts completion
 ## /usr/share/doc/zsh/examples/ssh_completion.gz
 ## Including IP addresses
-[ -e $HOME/.ssh/known_hosts ] && hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})
+hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})
 ## Excluding IP addresses
 # hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})
 ## For every command accepting hosts
@@ -97,6 +101,9 @@ zstyle ':completion:*:(functions|parameters|association-keys)' \
                                                             ignored-patterns '_*'
 ## normally I don't want to complete *.o and *~, so, I'll ignore them
 ## update: these patterns are not ignored for rm, since i might want to delete those files
+zstyle ':completion:*:*:(^rm):*:*files'                 ignored-patterns '*?.o' '*?\~'
+
+## vi(m) can ignore even more files
 zstyle ':completion:*:*:(^rm):*:*files'                 ignored-patterns '*?.o' '*?\~'
 
 ## vi(m) can ignore even more files
@@ -164,7 +171,7 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)[ 0-9:]#([
 #####################################################################
 
 ## zkbd helps defining human-friendly keymap names by sourcing a properly named
-## file from ~/.zkbd
+## file from ~/.zsh/zkbd
 
 ## A file is created by calling zkbd if there doesn't exist one for the current
 ##triple: $TERM-$VENDOR-$OSTYPE
@@ -372,6 +379,44 @@ function _narrow_to_region_marked()
   narrow-to-region -p "$left>>|" -P "|<<$right"
 }
 
+### some scripts from either of these three (who copied from who?)
+# http://wael.nasreddine.com/cgi-bin/viewvc.cgi/wael/trunk/etc/.zsh/zle?revision=628&view=markup&sortby=author
+# http://hg.codemac.net/config/
+# git://github.com/gigamo/config.git
+## bracket_automatcher
+bracket_automatcher() {
+    zle self-insert
+    zle vi-backward-char
+    zle vi-match-bracket
+    zle -R
+    sleep 0.2
+    zle vi-match-bracket
+    zle forward-char
+}
+zle -N bracket_automatcher
+bindkey ']' bracket_automatcher
+bindkey '}' bracket_automatcher
+bindkey ')' bracket_automatcher
+#
+## clear-bottom
+clear-screen-bottom () {
+    echo -n "\033[2J\033[400H"
+    builtin zle .redisplay
+}
+zle -N clear-screen-bottom
+bindkey "^L" clear-screen-bottom
+
+## expand-or-complete-prefix is much cooler
+bindkey '^I' expand-or-complete-prefix
+
+## Cycle in reverse with meta-tab
+bindkey '\e^I' reverse-menu-complete
+
+## ctrl-o to browse directory hierarchies
+bindkey  -M  menuselect  '^o'  accept-and-infer-next-history
+
+## _email_addresses from lbdbq
+autoload -U _email-lbdbq
 #####################################################################
 ### Prompt and terminal title
 #####################################################################
@@ -573,6 +618,18 @@ alias mmv='noglob zmv -W'
 ## nohup-alike function
 autoload dehup
 
+## dircolors
+# Orange dirs, 2008-04-13, redondos
+# Good for xterm
+# No good for urxvt, orange not available
+# eval $(dircolors =(print "${$(dircolors --print-database)//DIR ?????/DIR 38;5;202}"))
+
+## run-help-sudo
+# 2008-14-21, me
+# when calling "sudo cmd", run-help will look for a function called run-help-$1
+# and use it if available, passing the arguments shifted to the left
+run-help-sudo() { man $1; }
+
 #####################################################################
 ### Parameters
 #####################################################################
@@ -604,7 +661,7 @@ DIRSTACKSIZE=50
 LOGCHECK=20
 
 ## Print $TIMEFMT if command's combined execution time is greater than this value.
-REPORTTIME=60
+REPORTTIME=5
 
 ## Report login activity in $WATCHFMT
 watch=(notme)
@@ -621,127 +678,18 @@ watch=(notme)
 setopt AUTO_CD
 
 ## Make cd push the old directory onto the directory stack.
-setopt AUTO_PUSHD
-
-## Expand directory expressions as if they all started with ~
-setopt CDABLE_VARS
-
-## Don't push multiple copies of the same  directory
-setopt PUSHD_IGNORE_DUPS
-
-##---------------------------
-## Completion
-##---------------------------
-
-## Switch between possible completions after an additional TAB.
-## (default, replaced by MENU_COMPLETE)
-# setopt AUTO_MENU
-
-## Append a slash to autocompleted parameters that correspond to directories.
-setopt AUTO_PARAM_SLASH
-
-## Remove added space after completing a parameter and then entering a
-## character that needs to be inside the parameter, e.g. `:'.
-setopt AUTO_PARAM_KEYS
-
-## Remove trailing slashes if they aren't relevant to the command executed.
-## (set by default)
-unsetopt AUTO_REMOVE_SLASH
-
-## Don't complete aliases using the expanded command.
-# setopt COMPLETE_ALIASES
-
-## Complete in middle of a word without considering the full string.
-setopt COMPLETE_IN_WORD
-
-## Complete non-ambiguous prefix/suffix first, then display the ambiguities
-## after another function call.
-setopt LIST_AMBIGUOUS
-
-## Switch between possible completions, immediately.
-setopt MENU_COMPLETE
-
-##---------------------------
-## Expansion and Globbing
-##---------------------------
-
-## Substitute globs inside variables (like in sh): foo=*; print $foo
-# setopt GLOB_SUBST
-
-## `@', `*', `+', `?' and `!' are special in pattern matching
-setopt KSH_GLOB
-
-## Non-matching globs as printed as-is
-setopt NO_NOMATCH
-
-## Remove non-matching globs from expressions with multiple globs
-## This overrides NOMATCH, so I don't like it.
-# setopt CSH_NULL_GLOB
-
-## Print blank lines instead of globs/error when no matches are found
-# setopt NULL_GLOB
-
-## Allow `#', `~' and `^' to be treated as part of patterns
-setopt EXTENDED_GLOB
-
-## Warn when a global variable is created inside a function (override with
-## typeset -g)
-setopt WARN_CREATE_GLOBAL
-
-##---------------------------
-## History
-##---------------------------
-
-## Append to history instead of replacing
-setopt APPEND_HISTORY
-
-## Append to history in real time
-setopt INC_APPEND_HISTORY
-
-## Read from history file in real time
-setopt SHARE_HISTORY
-
-## Ignore duplicate history entries
-setopt HIST_IGNORE_ALL_DUPS
-
-## Remove useless blanks from history 
-setopt HIST_REDUCE_BLANKS
-
-## Add date and duration of each command to history file
-setopt EXTENDED_HISTORY
-
-##---------------------------
-## Initialisation
-##---------------------------
-
-##---------------------------
-## Input/Output
-##---------------------------
-
-## Don't truncate existing files
-setopt NO_CLOBBER
-
-## Correct spelling of commands
-setopt CORRECT
-
-## Correct all spelling mistakes
-# setopt CORRECT_ALL
-
-## Allow comments even in interactive shells.
-setopt INTERACTIVE_COMMENTS
-
-## Allow single quotes inside single quotes: ''
-setopt RC_QUOTES
-
-##---------------------------
-## Job Control
-##---------------------------
-
 ## Don't send SIGHUP to bg jobs when the shell exits
 # setopt NO_NOHUP
 
 ## Background jobs notify its status immediately
 setopt NOTIFY
+
+##---------------------------
+## Expansion and globbing
+##---------------------------
+
+## Extended globbing
+setopt EXTENDED_GLOB
 
 ##---------------------------
 ## Prompting

@@ -14,7 +14,7 @@ clear-zle-screen() {
     stat -A mtime +mtime $TTY
     (( diff = EPOCHSECONDS - ${mtime} ))
     if (( diff >= CLRTMOUT )); then
-	zle && zle clear-screen
+	zle && zle clear-screen-bottom
     # function called from precmd(), to avoid multiple clearouts
     #    sched +$CLRTMOUT clear-zle-screen
     else

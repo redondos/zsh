@@ -1,6 +1,15 @@
 #compdef unison
 
+typeset -A opt_args
+local context state line
+
+_arguments \
+	'-addprefsto[file to add new prefs to]' \
+	'-addversionno[add version number to name of unison executable on server]' \
+	&& return 0
+
 r=(~/.unison/*.prf)
 compadd ${${r%.prf}##*/}
+# reply+=(${${r%.prf}##*/})
 
-compdef _unison unison
+#        compdef _unison unison

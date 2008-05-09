@@ -1,0 +1,8 @@
+#autoload
+_email-lbdbq() {
+	while read address name; do
+		reply+=(${name%[[:space:]]*\(*\)}:$address)
+	done < <(lbdbq)
+	return 300
+}
+
