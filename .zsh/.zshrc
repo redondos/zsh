@@ -284,7 +284,7 @@ bindkey '\eq' push-line-or-edit
 ## Function that performs commands similar to the way readline does
 ## That is, removing some characters from $WORDCHARS
 readline-command() {
-    typeset WORDCHARS=${WORDCHARS//[\/.:;-]}
+    typeset WORDCHARS=${WORDCHARS//[\/.:;-@#]}
     zle ${WIDGET#readline-}
 }
 
