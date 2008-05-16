@@ -1,0 +1,33 @@
+# exec_on_xclip, by ft
+# http://bewatermyfriend.org/posts/2007/05-17.17-57-48-computer.html
+if whence xclip &>/dev/null; then
+    if autoload exec_on_xclip; then
+        zle -N exec_on_xclip
+        bindkey '^xb'   exec_on_xclip
+        bindkey '^x^b'  exec_on_xclip
+        zstyle ':exec_on_xclip:*'             contexts                      \
+                                                  "0:uri_http"  'http://*'  \
+                                                  "1:file_gz"   '(/|~)*.gz' \
+                                                  "2:file"      '(/|~)*'
+
+        zstyle ':exec_on_xclip:*'             stages '0:nox' '1:x11'
+        zstyle ':exec_on_xclip:*'             xclip "xclip"
+        zstyle ':exec_on_xclip:*'             options "-o"
+        zstyle ':exec_on_xclip:*'             pager "less -Mr"
+        zstyle ':exec_on_xclip:x11:*'         operate false
+        zstyle ':exec_on_xclip:nox:*'         clearterm true
+        if   [[ -x $(which opera) ]] ; then
+            zstyle ':exec_on_xclip:x11:uri_http'  app 'opera -remote openURL(_eoxc_)'
+        elif [[ -x $(which firefox) ]] ; then
+            zstyle ':exec_on_xclip:x11:uri_http'  app 'firefox -new-tab _eoxc_'
+        else
+            zstyle ':exec_on_xclip:x11:uri_http'  app false
+        fi
+        zstyle ':exec_on_xclip:*:uri_http'    app "${BROWSER:-w3m} _eoxc_"
+        zstyle ':exec_on_xclip:*:file_gz'     app "zless _eoxc_"
+        zstyle ':exec_on_xclip:*:file'        app "less _eoxc_"
+
+    fi
+fi
+
+# vim:ft=zsh

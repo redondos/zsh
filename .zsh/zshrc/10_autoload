@@ -1,0 +1,8 @@
+#
+# autoload
+#
+
+# autoload all executable files in $fpath
+autoload -U $^fpath/*(.xN:t)
+
+# vim:ft=zsh

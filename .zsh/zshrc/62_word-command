@@ -1,0 +1,41 @@
+#
+# Fine-tuned word manipulation
+#
+# Copyright © 2008, Angel Olivera
+#
+
+longword-command() {
+    typeset -U WORDCHARS=${WORDCHARS}:@,+
+    zle ${WIDGET#longword-}
+}
+shortword-command() {
+    typeset WORDCHARS=${WORDCHARS//[\/.:;-@# ]}
+    zle ${WIDGET#shortword-}
+}
+
+# kill-word
+zle -N longword-kill-word longword-command
+zle -N shortword-kill-word shortword-command
+bindkey '\ed' shortword-kill-word
+bindkey '\eD' longword-kill-word
+
+# backward-kill-word
+zle -N longword-backward-kill-word longword-command
+zle -N shortword-backward-kill-word shortword-command
+bindkey '\ew' shortword-backward-kill-word
+bindkey '^w' shortword-backward-kill-word
+bindkey '\eW' longword-backward-kill-word
+
+# forward-word
+zle -N longword-forward-word    longword-command
+zle -N shortword-forward-word    shortword-command
+bindkey '\ef' shortword-forward-word
+bindkey '\eF' longword-forward-word
+
+# backward-word
+zle -N longword-backward-word   longword-command
+zle -N shortword-backward-word  shortword-command
+bindkey '\eb' shortword-backward-word
+bindkey '\eB' longword-backward-word
+
+# vim:ft=zsh
