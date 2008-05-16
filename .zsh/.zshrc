@@ -281,33 +281,40 @@ bindkey '^xn' history-beginning-search-forward
 ## buffer stack
 bindkey '\eq' push-line-or-edit
 
-## Function that performs commands similar to the way readline does
-## That is, removing some characters from $WORDCHARS
-readline-command() {
-    typeset WORDCHARS=${WORDCHARS//[\/.:;-@#]}
-    zle ${WIDGET#readline-}
+## Fine-tuned word manipulation
+longword-command() {
+    typeset -U WORDCHARS=${WORDCHARS}:@,+
+    zle ${WIDGET#longword-}
+}
+shortword-command() {
+    typeset WORDCHARS=${WORDCHARS//[\/.:;-@# ]}
+    zle ${WIDGET#shortword-}
 }
 
-## readline-kill-word
-zle -N readline-kill-word readline-command
-bindkey '\ed' readline-kill-word
-bindkey '\eD' kill-word
+# kill-word
+zle -N longword-kill-word longword-command
+zle -N shortword-kill-word shortword-command
+bindkey '\ed' shortword-kill-word
+bindkey '\eD' longword-kill-word
 
-## readline-backward-kill-word
-zle -N readline-backward-kill-word readline-command
-bindkey '\ew' readline-backward-kill-word
-bindkey '^w' readline-backward-kill-word
-bindkey '\eW' backward-kill-word
+# backward-kill-word
+zle -N longword-backward-kill-word longword-command
+zle -N shortword-backward-kill-word shortword-command
+bindkey '\ew' shortword-backward-kill-word
+bindkey '^w' shortword-backward-kill-word
+bindkey '\eW' longword-backward-kill-word
 
-## readline-forward-word
-zle -N readline-forward-word readline-command
-bindkey '\ef' readline-forward-word
-bindkey '\eF' forward-word
+# forward-word
+zle -N longword-forward-word    longword-command
+zle -N shortword-forward-word    shortword-command
+bindkey '\ef' shortword-forward-word
+bindkey '\eF' longword-forward-word
 
-## readline-backward-word
-zle -N readline-backward-word readline-command
-bindkey '\eb' readline-backward-word
-bindkey '\eB' backward-word
+# backward-word
+zle -N longword-backward-word   longword-command
+zle -N shortword-backward-word  shortword-command
+bindkey '\eb' shortword-backward-word
+bindkey '\eB' longword-backward-word
 
 ## Enter directories in menu selection, from zshguide.
 bindkey -M menuselect '^o' accept-and-infer-next-history
