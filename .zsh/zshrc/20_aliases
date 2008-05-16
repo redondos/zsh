@@ -1,0 +1,41 @@
+# 
+# Aliases and environment
+#
+
+## Gentoo
+[ -e /etc/profile.env ] && source /etc/profile.env
+
+## Debian
+[ -e /etc/profile ] && [[ $HOST != mother* ]] && source /etc/profile
+
+#for f in /etc/profile.d/*.sh ; do
+#    [ -x "$f" ] && source "$f"
+#done
+
+umask 0027
+
+## Aliases common to all shells
+[ -f ~/.aliasrc ] && . ~/.aliasrc
+
+## zsh=specific aliases
+alias -g L='|less'
+alias -g shh='&> /dev/null '
+alias lsd='ls -ld *(-/DN)'
+alias histcount='history -i 1 | awk "{a[\$2]++} END {for(date in a) print date, a[date]}" | sort -nk2'
+functions -u help-zshglob
+
+[[ -r ~/.envrc ]] && . ~/.envrc
+[[ -d ~/.zsh_functions.d ]] && fpath=(~/.zsh_functions.d $fpath)
+[[ -d ~/.zsh/functions ]] && for dir in ~/.zsh/functions/*(/); do nfpath+=($dir); done
+fpath=($nfpath $fpath)
+
+## Colorize stderr
+# http://gentoo-wiki.com/TIP_Advanced_zsh_Completion 
+#exec 2>>(while read line; do
+#    print '\e[91m'${(q)line}'\e[0m' > /dev/tty; 
+#done &)
+
+## Only unique entries
+typeset -U path
+
+# vim:ft=zsh

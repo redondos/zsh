@@ -1,0 +1,37 @@
+#
+# Environment
+#
+
+##---------------------------
+## History
+##---------------------------
+
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=1000000
+
+##---------------------------
+## Other
+##---------------------------
+
+## Clear the screen after CLRTMOUT seconds of inactivity
+## $fpath/clear-zle-screen
+if [[ $ZSH_VERSION == 4.3.<4-> ]]; then
+    CLRTMOUT=3600
+    autoload clear-zle-screen
+    clear-zle-screen
+fi
+
+## Bigger stack size
+DIRSTACKSIZE=50
+
+## wtmp check interval for WATCH
+LOGCHECK=20
+
+## Print $TIMEFMT if command's combined execution time is greater than this value.
+REPORTTIME=5
+
+## Report login activity in $WATCHFMT
+watch=(notme)
+
+# vim:ft=zsh
