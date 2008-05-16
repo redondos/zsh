@@ -1,0 +1,4 @@
+for file in $ZDOTDIR/${${(%):-%1N}#.}/*; do
+	. $file
+done
+
