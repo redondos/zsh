@@ -5,7 +5,7 @@ ps -C msmtp-daemon.sh &>/dev/null || ~/.mutt/scripts/msmtpqueue/msmtp-daemon.sh
 
 if [[ -r ~/.xinitrc && -z $SSH_CLIENT ]]; then
 	print '\n\nLogin shell: starting X11'
-	startx
+	startx &! logout
 fi
 
 # TODO: .zlogout
