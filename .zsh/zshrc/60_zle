@@ -17,6 +17,17 @@ bindkey -e
 [[ -n ${key[Left]}      ]]  &&  bindkey "${key[Left]}"      backward-char
 [[ -n ${key[Right]}     ]]  &&  bindkey "${key[Right]}"     forward-char
 
+## listscroll
+# bindings for the list-prompt style
+[[ -n ${key[Up]}        ]]  &&  bindkey -M listscroll "${key[Up]}"        up-line-or-history
+[[ -n ${key[Down]}      ]]  &&  bindkey -M listscroll "${key[Down]}"      down-line-or-history
+
+## menuselect
+bindkey -M menuselect '^[h' backward-char
+bindkey -M menuselect '^[l' forward-char
+bindkey -M menuselect '^[j' down-line-or-history
+bindkey -M menuselect '^[k' up-line-or-history
+
 ## Kill that word
 bindkey '^\\' backward-kill-word
 
