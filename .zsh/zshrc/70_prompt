@@ -106,7 +106,10 @@ precmd() {
     
 }
 
-[ -e ~/.zsh/prompt-madduck ] && . ~/.zsh/prompt-madduck
+## Prompt taken from MadCoder's config, apparently stolen from madduck's
+## TODO: add other VCSs, incorporate more ideas
+[[ -n $functions[madduck] ]] && madduck
+
 ###
 # preexec()
 
