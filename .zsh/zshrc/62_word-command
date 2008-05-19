@@ -9,7 +9,7 @@ longword-command() {
     zle ${WIDGET#longword-}
 }
 shortword-command() {
-    typeset WORDCHARS=${WORDCHARS//[\/.:;-@# ]}
+    typeset WORDCHARS=${WORDCHARS//[\/.:;@# -]}
     zle ${WIDGET#shortword-}
 }
 
