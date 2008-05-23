@@ -23,12 +23,14 @@ clear-zle-screen() {
 }
 
 functions[precmd]+='
+if ((CLRTMOUT)); then
 sched | 
 	while read line; do 
 		if [[ $line == *clear-zle-screen* ]]; then 
 			sched -${line%% *}
 		fi
 	done
-sched +$CLRTMOUT clear-zle-screen
+	sched +$CLRTMOUT clear-zle-screen
+fi
 '
 clear-zle-screen
