@@ -23,12 +23,18 @@ elif [ "$1" = '-l' ]; then
     i="${i#$FGIT_BASE/}"
     echo "${i%.git}"
   done
+  echo none
   return 0
 fi
 
-if [ ! -d "$FGIT_BASE/${1}.git" ]; then
-  echo E: no repository found for "$1" >&2
-  return 2
+if [ "$1" = "none" ]; then
+  unset GIT_DIR GIT_WORK_TREE
+  return 0
+else
+  if [ ! -d "$FGIT_BASE/${1}.git" ]; then
+    echo E: no repository found for "$1" >&2
+    return 2
+  fi
 fi
 
 export GIT_DIR="$FGIT_BASE/${1}.git"
