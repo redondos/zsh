@@ -18,6 +18,7 @@ umask 0027
 [ -f ~/.aliasrc ] && . ~/.aliasrc
 
 ## zsh=specific aliases
+alias R='exec zsh'
 alias -g L='|less'
 alias -g shh='&> /dev/null '
 alias lsd='ls -ld *(-/DN)'
