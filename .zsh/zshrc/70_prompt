@@ -18,9 +18,6 @@ promptinit
 ###
 # PROMPT
 
-# [[ $HOSTNAME = refinery* ]] && prompt gentoo || source ~/.zsh/prompt-$HOSTNAME
-source ~/.zsh/functions/Prompts/gentoo
-
 ###
 # RPROMPT
 
