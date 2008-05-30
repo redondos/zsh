@@ -1,0 +1,7 @@
+#
+# $HOSTNAME
+#
+
+export HOSTNAME=$(hostname)
+
+# ft=zsh
