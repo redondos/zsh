@@ -1,0 +1,3 @@
+# Environment shared with other shells
+[[ -r ~/.envrc ]] && . ~/.envrc
+
