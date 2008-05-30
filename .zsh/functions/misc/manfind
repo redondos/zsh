@@ -1,0 +1,1 @@
+manfind() { man -P "less -p \"$argv[2,-1]\"" $1; }
