@@ -147,6 +147,9 @@ setopt NOTIFY
 ## Expand expressions inside prompts: PS1='${PWD}% '
 # setopt PROMPT_SUBST
 
+## Remove right prompt after entering command
+setopt TRANSIENT_RPROMPT
+
 ##---------------------------
 ## Scripts and Functions
 ##---------------------------
