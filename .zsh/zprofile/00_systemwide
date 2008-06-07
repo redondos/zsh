@@ -1,0 +1,11 @@
+# 
+# System-wide profile configuration
+#
+
+## Gentoo
+[ -e /etc/profile.env ] && source /etc/profile.env
+
+## Debian
+[ -e /etc/profile ] && [[ $HOST != mother* ]] && source /etc/profile
+
+# vim:ft=zsh

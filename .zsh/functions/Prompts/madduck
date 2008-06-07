@@ -48,11 +48,11 @@ $pcc[1]└[$pcc[2]%{%(?..%S)%}%m%s$pcc[1]] $rst"
 }
 
 if [ $UID -eq 0 ]; then
-    PATH=~root/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+#    PATH=~root/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
     PROMPT="%{$reset_color$fg_bold[yellow]%}[%{$fg_bold[red]%}%n %m%{$fg_bold[yellow]%}]%{$reset_color%} "
     RPROMPT="%{$reset_color$fg_no_bold[red]%}(%{$fg_bold[red]%}%~%{$fg_no_bold[red]%})%{$reset_color%} "
 else
-    PATH="/usr/lib/ccache:${HOME}/bin:${HOME}/.madconf/bin:${PATH}"
+#    PATH="/usr/lib/ccache:${HOME}/bin:${HOME}/.madconf/bin:${PATH}"
     _mad_prompt_setup
 fi
 

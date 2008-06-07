@@ -2,16 +2,6 @@
 # Aliases and environment
 #
 
-## Gentoo
-[ -e /etc/profile.env ] && source /etc/profile.env
-
-## Debian
-[ -e /etc/profile ] && [[ $HOST != mother* ]] && source /etc/profile
-
-#for f in /etc/profile.d/*.sh ; do
-#    [ -x "$f" ] && source "$f"
-#done
-
 umask 0027
 
 ## Aliases common to all shells
@@ -30,8 +20,5 @@ functions -u help-zshglob
 #exec 2>>(while read line; do
 #    print '\e[91m'${(q)line}'\e[0m' > /dev/tty; 
 #done &)
-
-## Only unique entries
-typeset -U path
 
 # vim:ft=zsh

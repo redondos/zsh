@@ -27,4 +27,6 @@ autoload dehup
 # and use it if available, passing the arguments shifted to the left
 run-help-sudo() { man $1; }
 
+cd $HOME
+
 # vim:ft=zsh
