@@ -113,6 +113,9 @@ setopt EXTENDED_HISTORY
 ## Remove 'history' and 'fc -l' from history list
 setopt HIST_NO_STORE
 
+## Add | to history redirections
+setopt HIST_ALLOW_CLOBBER
+
 ##---------------------------
 ## Initialisation
 ##---------------------------
