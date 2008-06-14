@@ -38,6 +38,7 @@ alias nrp='unset RPROMPT; unset RPROMPT_ENABLED'
 alias cdlocate='locate -i -d /var/lib/cds.db'
 alias lastlogs='find ~/.purple/logs -type f | grep -v system | xargs ls -ltr | tail'
 alias confcat="sed '/^\s*\([#;\"].*\)\?$/d'"
+alias scat='sed -n l'
 
 ## Manpage havoc
 # alias man='man -P vi-pager.sh'
