@@ -95,6 +95,12 @@ setopt APPEND_HISTORY
 ## Read from history file in real time
 setopt SHARE_HISTORY
 
+## Don't display duplicates of a line previously found
+setopt HIST_FIND_NO_DUPS
+
+## Don't save duplicates to history file
+setopt HIST_SAVE_NO_DUPS
+
 ## Ignore duplicate history entries
 setopt HIST_IGNORE_ALL_DUPS
 
@@ -103,6 +109,9 @@ setopt HIST_REDUCE_BLANKS
 
 ## Add date and duration of each command to history file
 setopt EXTENDED_HISTORY
+
+## Remove 'history' and 'fc -l' from history list
+setopt HIST_NO_STORE
 
 ##---------------------------
 ## Initialisation
