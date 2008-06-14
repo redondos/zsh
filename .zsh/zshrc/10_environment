@@ -1,5 +1,5 @@
 #
-# Environment
+# Environment and parameters
 #
 
 ##---------------------------
@@ -33,5 +33,8 @@ REPORTTIME=5
 
 ## Report login activity in $WATCHFMT
 watch=(notme)
+
+## run-help
+HELPDIR=/usr/share/${${:-$(readlink -e $(which zsh))}##*/}/help
 
 # vim:ft=zsh
