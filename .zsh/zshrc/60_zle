@@ -152,4 +152,8 @@ bindkey '\e^I' reverse-menu-complete
 ## ctrl-o to browse directory hierarchies
 bindkey  -M  menuselect  '^o'  accept-and-infer-next-history
 
+## shift-[up/down] jumps in history even with multiline commands
+bindkey '\e[a' up-history
+bindkey '\e[b' down
+
 # vim:ft=zsh
