@@ -89,8 +89,8 @@ setopt WARN_CREATE_GLOBAL
 ## Append to history instead of replacing
 setopt APPEND_HISTORY
 
-## Append to history in real time
-setopt INC_APPEND_HISTORY
+## Append to history in real time without re-reading it
+# setopt INC_APPEND_HISTORY
 
 ## Read from history file in real time
 setopt SHARE_HISTORY
