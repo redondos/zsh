@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-if [[ -n $SSH_CONNECTION ]]; then
+if [[ -z $SSH_CONNECTION ]]; then
 	omit_output=$(test -e ~/bin/screen.reboot && ~/bin/screen.reboot &)
 	test -e ~/.mutt/scripts/msmtpqueue && ps -C msmtp-daemon.sh &>/dev/null || { print "Starting msmtp-daemon..."; ~/.mutt/scripts/msmtpqueue/msmtp-daemon.sh; }
 
