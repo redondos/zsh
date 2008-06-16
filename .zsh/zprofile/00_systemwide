@@ -2,10 +2,14 @@
 # System-wide profile configuration
 #
 
+setopt nullglob
+#
 ## Gentoo
 [ -e /etc/profile.env ] && source /etc/profile.env
 
 ## Debian
 [ -e /etc/profile ] && [[ $HOST != mother* ]] && source /etc/profile
+
+unsetopt nullglob
 
 # vim:ft=zsh
