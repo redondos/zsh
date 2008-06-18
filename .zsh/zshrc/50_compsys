@@ -14,7 +14,11 @@ _force_rehash() {
 }
 zstyle ':completion:*' completer _force_rehash _expand _complete _correct _approximate
 
-zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
+## verbose descriptions
+zstyle ':completion:*'			verbose yes
+
+## list-colors
+zstyle ':completion:*'			list-colors ${(s.:.)LS_COLORS}
 
 ## 'format' style
 zstyle ':completion:*:descriptions'	format "- %d -"
@@ -36,79 +40,50 @@ zstyle ':completion:*:manuals.(^1*)'	insert-sections   true
 zstyle ':completion:*:words'		separate-sections true
 
 ## list-separator
-zstyle ':completion:*' list-separator '#'
+zstyle ':completion:*'			list-separator '#'
 
-## Always use menu selection
-## select=<N>
-zstyle ':completion:*' menu select
+## tolerate errors
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
 
-zstyle ':completion:*' verbose yes
+## Always use menu completion
+# select=<N>
+zstyle ':completion:*'			menu select
 
-### $hosts completion
-## /usr/share/doc/zsh/examples/ssh_completion.gz
+zstyle ':completion:*'			verbose yes
+
+## $hosts completion
+# /usr/share/doc/zsh/examples/ssh_completion.gz
 ## Including IP addresses
 hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})
 ## Excluding IP addresses
 # hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})
-## For every command accepting hosts
-zstyle ':completion:*:hosts' hosts $hosts
-## Only for SSH
-zstyle ':completion:*:complete:ssh:*:hosts' hosts $hosts
+zstyle ':completion:*:hosts'			hosts $hosts
+zstyle ':completion:*:complete:ssh:*:hosts'	hosts $hosts
+zstyle ':completion:*:(nc|ping|ssh|nmap|*ftp|telnet|finger):*'	hosts $hosts
 
-## Tolerate errors
-zstyle -e ':completion:*:approximate:*'     max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
+## don't complete completion functions (those starting with _)
+zstyle ':completion:*:(functions|parameters|association-keys)'		ignored-patterns '_*'
 
-## functions starting with '_' are completion functions by convention
-## these are not supposed to be called by hand. no completion needed.
-zstyle ':completion:*:(functions|parameters|association-keys)' \
-                                                            ignored-patterns '_*'
-## normally I don't want to complete *.o and *~, so, I'll ignore them
-## update: these patterns are not ignored for rm, since i might want to delete those files
-zstyle ':completion:*:*:(^rm):*:*files'                 ignored-patterns '*?.o' '*?\~'
-
-## vi(m) can ignore even more files
-zstyle ':completion:*:*:(^rm):*:*files'                 ignored-patterns '*?.o' '*?\~'
-
-## vi(m) can ignore even more files
+## ignored-patterns
+zstyle ':completion:*:*:(^rm):*:*files'			ignored-patterns '*?.o' '*?\~'
 zstyle ':completion::*:(vi|vim):*'                      ignored-patterns '*?.(lo|so|la|o)'
 
-## enable verbose completion; descriptions like: '-a  -- list entries starting with .'
-zstyle ':completion:*'                                  verbose yes
-
-## if i have 'rm file0' on the commandline
-## i don't need "file0" in possible completions
+## don't consider words already on the command line for completion
 zstyle ':completion:*:(rm|kill):*'                      ignore-line yes
 
-## $hosts for <tab> completing hostnames
-zstyle ':completion:*:(nc|ping|ssh|nmap|*ftp|telnet|finger):*' \
-                                                            hosts $hosts
-
-## i like kill <tab>, but i want more processes...
-zstyle ':completion:*:processes'                        command 'ps --forest -A -o pid,user,cmd'
+## processes completion (e.g. kill)
+# if sorted, then --forest becomes useless
 zstyle ':completion:*:*:kill:*:processes'               sort false
+zstyle ':completion:*:processes'                        command 'ps --forest -A -o pid,user,cmd'
 zstyle ':completion:*:processes-names'                  command 'ps c -u ${USER} -o command | uniq'
+zstyle ':completion:*:processes'			command 'ps --forest -au$USER -o pid,time,cmd | grep -v "ps .* pid,time,cmd"'
+zstyle ':completion:*:*:kill:*:processes'		list-colors '=(#b) #([0-9]#)[ 0-9:]#([^ ]#)*=01;30=01;31=01;38'
 
-### Random stuff
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 if [[ $HOSTNAME == refinery* ]]; then
     zstyle ':completion:*:urls' local aolivera.com.ar /var/www/aolivera.com.ar/htdocs
     zstyle ':completion:*:urls' local twat.com.ar ~/public_html
 fi
-## In case AUTO_CD is not enabled
-# compctl -/ cd
-
-## Aptitude 4.6 includes many aptitude-* commands that we don't want to be completed.
-# zstyle ':completion:*:complete:-command-::commands'       ignored-patterns 'aptitude-*'
-# zstyle ':completion:::::'                                 completer _complete _ignored _approximate
-
-## Enable/disable globdots for completion
-# _comp_options=(${_comp_options//*globdots/} noglobdots)
-# _comp_options=(${_comp_options//*globdots/} globdots)
-
-## kill
-zstyle ':completion:*:processes' command 'ps -au$USER -o pid,time,cmd|grep -v "ps -au$USER -o pid,time,cmd"'
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)[ 0-9:]#([^ ]#)*=01;30=01;31=01;38'
 
 ### Credits:
 ## http://zshwiki.org/home/examples/compquickstart
