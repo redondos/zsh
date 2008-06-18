@@ -19,7 +19,7 @@ zstyle ':completion:*'			list-colors ${(s.:.)LS_COLORS}
 ## 'format' style
 zstyle ':completion:*:descriptions'	format "- %d -"
 zstyle ':completion:*:messages'		format "- %d -"
-zstyle ':completion:*:corrections'	format "- %d - (errors %e})"
+zstyle ':completion:*:corrections'	format "- %d (errors: %e) -"
 zstyle ':completion:*:warnings'		format "- no matches: %d -"
 
 ## options with no descriptions will display the description of their arguments
