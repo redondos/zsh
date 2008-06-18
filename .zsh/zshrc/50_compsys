@@ -25,8 +25,6 @@ zstyle ':completion:*:warnings'		format "- no matches: %d -"
 ## options with no descriptions will display the description of their arguments
 zstyle ':completion:*'			auto-description "argument: %d"
 
-zstyle ':completion:*:default'		list-prompt '%S%M matches%s'
-
 ## group-name
 ## the empty string will make zsh use tag names for the group name
 zstyle ':completion:*'			group-name ''
