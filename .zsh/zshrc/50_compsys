@@ -36,6 +36,9 @@ zstyle ':completion:*:manuals'		separate-sections true
 # dict entries
 zstyle ':completion:*:words'		separate-sections true
 
+## list-separator
+zstyle ':completion:*' list-separator '#'
+
 ## Always use menu selection
 ## select=<N>
 zstyle ':completion:*' menu select
@@ -111,9 +114,6 @@ fi
 ## Enable/disable globdots for completion
 # _comp_options=(${_comp_options//*globdots/} noglobdots)
 # _comp_options=(${_comp_options//*globdots/} globdots)
-
-## Different separator
-zstyle ':completion:*' list-separator --\>
 
 ## kill
 # http://madism.org/~madcoder/dotfiles/zsh/40_completion
