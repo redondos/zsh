@@ -82,6 +82,9 @@ setopt EXTENDED_GLOB
 ## typeset -g)
 setopt WARN_CREATE_GLOBAL
 
+## Sort numeric filenames numerically, not lexically.
+setopt NUMERIC_GLOB_SORT
+
 ##---------------------------
 ## History
 ##---------------------------
