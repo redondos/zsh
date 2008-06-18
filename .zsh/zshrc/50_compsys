@@ -6,12 +6,8 @@ zmodload -i zsh/complist
 autoload -Uz compinit
 compinit -C
 
-# If you want zsh's completion to pick up new commands in $path automatically
-# comment out the next line and un-comment the following 5 lines
-_force_rehash() {
-  (( CURRENT == 1 )) && rehash
-  return 1 # Because we didn't really complete anything
-}
+## completers order
+autoload -U _force_rehash
 zstyle ':completion:*' completer _force_rehash _expand _complete _correct _approximate
 
 ## verbose descriptions
