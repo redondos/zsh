@@ -146,6 +146,9 @@ bindkey '\e^L' clear-screen-bottom
 ## expand-or-complete-prefix is much cooler
 bindkey '^I' expand-or-complete-prefix
 
+## alt-tab to expand word without completing
+bindkey '\e^I' expand-word
+
 ## Cycle in reverse with meta-tab
 bindkey '\e^I' reverse-menu-complete
 
