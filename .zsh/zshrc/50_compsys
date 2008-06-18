@@ -17,11 +17,15 @@ _force_rehash() {
 zstyle ':completion:::::' completer _force_rehash _complete _approximate
 
 zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
-zstyle ':completion:*:descriptions' format "- %d -"
-zstyle ':completion:*:corrections' format "- %d - (errors %e})"
-zstyle ':completion:*:default' list-prompt '%S%M matches%s'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:manuals' separate-sections true
+
+## 'format' style
+zstyle ':completion:*:descriptions'	format "- %d -"
+zstyle ':completion:*:messages'		format "- %d -"
+zstyle ':completion:*:corrections'	format "- %d - (errors %e})"
+zstyle ':completion:*:warnings'		format "- no matches: %d -"
+zstyle ':completion:*:default'		list-prompt '%S%M matches%s'
+zstyle ':completion:*'			group-name ''
+zstyle ':completion:*:manuals'		separate-sections true
 
 ## Always use menu selection
 ## select=<N>
