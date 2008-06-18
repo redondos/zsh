@@ -23,9 +23,18 @@ zstyle ':completion:*:descriptions'	format "- %d -"
 zstyle ':completion:*:messages'		format "- %d -"
 zstyle ':completion:*:corrections'	format "- %d - (errors %e})"
 zstyle ':completion:*:warnings'		format "- no matches: %d -"
+
 zstyle ':completion:*:default'		list-prompt '%S%M matches%s'
+
+## group-name
+## the empty string will make zsh use tag names for the group name
 zstyle ':completion:*'			group-name ''
+
+## separate-sections
+# man pages
 zstyle ':completion:*:manuals'		separate-sections true
+# dict entries
+zstyle ':completion:*:words'		separate-sections true
 
 ## Always use menu selection
 ## select=<N>
