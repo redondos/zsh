@@ -55,6 +55,9 @@ setopt MENU_COMPLETE
 ## Background jobs notify its status immediately
 setopt NOTIFY
 
+## Display characters identifying file types. Not needed due to colors.
+unsetopt LIST_TYPES
+
 ##---------------------------
 ## Expansion and Globbing
 ##---------------------------
