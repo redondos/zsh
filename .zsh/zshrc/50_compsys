@@ -58,7 +58,7 @@ zstyle ':completion:*:complete:ssh:*:hosts'	hosts $hosts
 zstyle ':completion:*:(nc|ping|ssh|nmap|*ftp|telnet|finger):*'	hosts $hosts
 
 ## don't complete completion functions (those starting with _)
-zstyle ':completion:*:(functions|parameters|association-keys)'		ignored-patterns '_*'
+zstyle ':completion::complete:*:functions'		ignored-patterns '_*'
 
 ## ignored-patterns
 zstyle ':completion:*:*:(^rm):*:*files'			ignored-patterns '*?.o' '*?\~'
