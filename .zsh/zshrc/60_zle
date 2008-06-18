@@ -143,11 +143,12 @@ zle -N clear-screen-bottom
 bindkey '^L' clear-screen-bottom
 bindkey '\e^L' clear-screen-bottom
 
-## expand-or-complete-prefix is much cooler
-bindkey '^I' expand-or-complete-prefix
+## complete the current word using the completion system instead of the
+## internal expansion and completion mechanism (new style)
+bindkey '^I' complete-word
 
-## alt-tab to expand word without completing
-bindkey '\e^I' expand-word
+## alt-tab to use the internal completiom mechanism (old style)
+bindkey '\e^I' expand-or-complete-word
 
 ## Cycle in reverse with meta-tab
 bindkey '\e^I' reverse-menu-complete
