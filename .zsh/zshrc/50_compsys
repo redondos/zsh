@@ -46,8 +46,6 @@ zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SU
 # select=<N>
 zstyle ':completion:*'			menu select
 
-zstyle ':completion:*'			verbose yes
-
 ## $hosts completion
 # /usr/share/doc/zsh/examples/ssh_completion.gz
 ## Including IP addresses
