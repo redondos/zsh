@@ -78,6 +78,10 @@ zstyle ':completion::*:(vi|vim):*'                      ignored-patterns '*?.(lo
 ## don't consider words already on the command line for completion
 zstyle ':completion:*:(rm|kill):*'                      ignore-line yes
 
+## when completing parameters, prefer expanding exact matches over completing
+## longer parameter names, but still offer them
+zstyle ':completion:*:expand:*'				accept-exact continue
+
 ## ignore prefix for _approximate
 ## this helps e.g. when completing options: bzip2 _-foo<TAB>
 zstyle ':completion::approximate*:*'			prefix-needed false
