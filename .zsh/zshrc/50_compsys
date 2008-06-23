@@ -50,6 +50,10 @@ zstyle -e ':completion:*:correct:*'	max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX
 # select=<N>
 zstyle ':completion:*'			menu select
 
+## when pasting, do not interpret <tab> if there are more characters queued for
+## reading
+zstyle ':completion:*'			insert-tab pending
+
 ## $hosts completion
 # /usr/share/doc/zsh/examples/ssh_completion.gz
 ## Including IP addresses
