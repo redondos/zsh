@@ -55,11 +55,15 @@ zstyle ':completion:*'			menu select
 zstyle ':completion:*'			insert-tab pending
 
 ## $hosts completion
-# /usr/share/doc/zsh/examples/ssh_completion.gz
-## Including IP addresses
-hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})
-## Excluding IP addresses
-# hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})
+typeset -U hosts
+
+# known_hosts
+hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})		# including IP addresses
+# hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})	# excluding IP addresses
+
+# $REMOTEHOST || $SSH_CLIENT
+hosts+=(${REMOTEHOST:-${SSH_CLIENT%% *}})
+
 zstyle ':completion:*:hosts'			hosts $hosts
 zstyle ':completion:*:complete:ssh:*:hosts'	hosts $hosts
 zstyle ':completion:*:(nc|ping|ssh|nmap|*ftp|telnet|finger):*'	hosts $hosts
@@ -93,6 +97,8 @@ if [[ $HOSTNAME == refinery* ]]; then
 fi
 
 ### Credits:
+## Kiddle, Peek, & Stephenson. (2005). "From Bash to Z Shell". Apress.
+## file:///usr/share/doc/zsh/examples/*
 ## http://zshwiki.org/home/examples/compquickstart
 ## http://ft.bewatermyfriend.org/
 ## http://madism.org/~madcoder/dotfiles/zsh/40_completion
