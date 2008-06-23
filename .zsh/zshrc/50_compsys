@@ -8,7 +8,10 @@ compinit -C
 
 ## completers order
 autoload -U _force_rehash
-zstyle ':completion:*' completer _force_rehash _expand _complete _correct _approximate
+zstyle ':completion:*' completer _force_rehash _expand _complete _prefix _correct _approximate
+
+## add a space after word completed by _prefix
+zstyle ':completion:*:prefix:*'		add-space true
 
 ## verbose descriptions
 zstyle ':completion:*'			verbose yes
@@ -40,7 +43,8 @@ zstyle ':completion:*:words'		separate-sections true
 zstyle ':completion:*'			list-separator '#'
 
 ## tolerate errors
-zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
+zstyle -e ':completion:*:approximate:*'	max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
+zstyle -e ':completion:*:correct:*'	max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 2 )) )'
 
 ## Always use menu completion
 # select=<N>
