@@ -74,6 +74,10 @@ zstyle ':completion::*:(vi|vim):*'                      ignored-patterns '*?.(lo
 ## don't consider words already on the command line for completion
 zstyle ':completion:*:(rm|kill):*'                      ignore-line yes
 
+## ignore prefix for _approximate
+## this helps e.g. when completing options: bzip2 _-foo<TAB>
+zstyle ':completion::approximate*:*'			prefix-needed false
+
 ## processes completion (e.g. kill)
 # if sorted, then --forest becomes useless
 zstyle ':completion:*:*:kill:*:processes'               sort false
