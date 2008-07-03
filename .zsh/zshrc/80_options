@@ -88,6 +88,9 @@ setopt WARN_CREATE_GLOBAL
 ## Sort numeric filenames numerically, not lexically.
 setopt NUMERIC_GLOB_SORT
 
+## Expand arrays with (suf|pre)fixes like in brace expansion
+setopt RC_EXPAND_PARAM
+
 ##---------------------------
 ## History
 ##---------------------------
