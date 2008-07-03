@@ -178,6 +178,12 @@ setopt TRANSIENT_RPROMPT
 ## All traps are local to functions
 # setopt LOCAL_TRAPS
 
+## C-style bases to output numbers
+setopt C_BASES
+
+## Prefix octal numbers with zeroes
+setopt OCTAL_ZEROES
+
 ##---------------------------
 ## Shell Emulation
 ##---------------------------
