@@ -172,4 +172,7 @@ bindkey '\e/' _history-complete-older
 ## emulates `unset always_last_prompt'
 bindkey '\eo' end-of-list
 
+## _complete_debug
+bindkey '^X?' _complete_debug
+
 # vim:ft=zsh
