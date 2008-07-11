@@ -160,6 +160,9 @@ bindkey  -M  menuselect  '^o'  accept-and-infer-next-history
 bindkey '\e[a' up-history
 bindkey '\e[b' down-history
 
+## toggle local and global history
+bindkey '^Xl' set-local-history
+
 ## load command line in $EDITOR
 autoload -U edit-command-line
 zle -N edit-command-line
