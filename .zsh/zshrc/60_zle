@@ -158,7 +158,7 @@ bindkey  -M  menuselect  '^o'  accept-and-infer-next-history
 
 ## shift-[up/down] jumps in history even with multiline commands
 bindkey '\e[a' up-history
-bindkey '\e[b' down
+bindkey '\e[b' down-history
 
 ## load command line in $EDITOR
 autoload -U edit-command-line
