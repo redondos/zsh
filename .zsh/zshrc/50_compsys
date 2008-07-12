@@ -7,8 +7,11 @@ autoload -Uz compinit
 compinit -C
 
 ## completers order
+# run rehash before completing
 autoload -U _force_rehash
-zstyle ':completion:*' completer _force_rehash _expand _complete _prefix _correct _approximate
+# complete files when hitting tab on an empty line
+autoload -U _listfiles
+zstyle ':completion:*' completer _listfiles _force_rehash _expand _complete _prefix _correct _approximate
 
 ## add a space after word completed by _prefix
 zstyle ':completion:*:prefix:*'		add-space true
