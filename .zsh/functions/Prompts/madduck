@@ -56,22 +56,3 @@ else
     _mad_prompt_setup
 fi
 
-case "$TERM" in
-    screen)
-        PROMPT="${PROMPT}%{kzsh\\%}"
-
-        preexec () {
-            local CMD=${1[(wr)^(*=*|sudo|exec|-*)]}
-            echo -ne "\ek$CMD\e\\"
-        }
-    ;;
-    xterm|rxvt-unicode)
-        PROMPT="${PROMPT}%{]2;zsh%}"
-
-        preexec () {
-            local CMD=${1[(wr)^(*=*|sudo|exec|-*)]}
-            echo -ne "\e]2;$CMD\007"
-        }
-    ;;
-    *);;
-esac
