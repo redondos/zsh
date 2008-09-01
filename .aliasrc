@@ -30,6 +30,7 @@ alias mem="free -m"
 alias qiv='XLIB_SKIP_ARGB_VISUALS=1 qiv'
 alias rm='rm -i'
 alias mv='mv -i'
+alias cp='cp -i'
 # alias tv='DISPLAY=:1.1'
 # grml's clean-prompt alias
 alias 0 &>/dev/null || functions 0 &>/dev/null || alias 0='return 0'
