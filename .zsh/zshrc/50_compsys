@@ -61,7 +61,7 @@ zstyle ':completion:*'			insert-tab pending
 typeset -U hosts
 
 # known_hosts
-hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})		# including IP addresses
+[[ -e ~/.ssh/known_hosts ]] && hosts=(${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*})		# including IP addresses
 # hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})	# excluding IP addresses
 
 # $REMOTEHOST || $SSH_CLIENT
