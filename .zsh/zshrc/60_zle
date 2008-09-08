@@ -178,4 +178,9 @@ bindkey '\eo' end-of-list
 ## _complete_debug
 bindkey '^X?' _complete_debug
 
+## show-date
+show-date() { date; zle reset-prompt; }
+zle -N show-date
+bindkey '\ek' show-date
+
 # vim:ft=zsh
