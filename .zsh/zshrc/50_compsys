@@ -103,6 +103,9 @@ if [[ $HOSTNAME == refinery* ]]; then
     zstyle ':completion:*:urls' local twat.com.ar ~/public_html
 fi
 
+## remove slashes from directory arguments
+zstyle ':completion:*' squeeze-slashes true
+
 ### Credits:
 ## Kiddle, Peek, & Stephenson. (2005). "From Bash to Z Shell". Apress.
 ## file:///usr/share/doc/zsh/examples/*
