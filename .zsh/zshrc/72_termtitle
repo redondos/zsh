@@ -1,0 +1,68 @@
+#
+# Terminal title
+#
+
+# Clear xterm title, not really needed but handy for testing the escape codes
+# under different terminals.
+# echo -ne '\e]0\a'
+
+__idle_termtitle() {
+    local termtitle vcs_git_branch
+
+    ## Changing IFS breaks a few things otherwise, especially clear-zle-screen
+    IFS=$' \t\n'
+
+    termtitle=$(print -P "%n@%m:%~ | ${COLUMNS}x${LINES} | %y")
+    title zsh "$termtitle"
+ 
+    if [[ -d .git ]]; then
+        vcs_git_branch="%{${fg[green]}%}{${$(git-symbolic-ref HEAD 2>/dev/null)#refs/heads/}}%{${fg[default]}%} "
+    fi
+}
+
+__running_termtitle() {
+    # With bits from http://zshwiki.org/home/examples/hardstatus
+    # emulate -L zsh
+    local -a cmd; cmd=(${(z)1})           # Re-parse the command line
+    local termtitle
+
+    # Prepend this string to the title.
+    # termtitle=$(print -P "%(!.-=*[ROOT]*=- | .)%n@%m:")
+    termtitle=$(print -P "%n@%m:")
+
+    case $cmd[1] in
+        fg)
+            if (( $#cmd == 1 )); then
+                # No arguments, must find the current job
+                # Old approach: cmd=(builtin jobs -l %+)
+                #   weakness: shows a load of bs
+                title ${jobtexts[${(k)jobstates[(R)*+*]}]%% *} "$termtitle ${jobtexts[${(k)jobstates[(R)*+*]}]}"
+            else
+                # Replace the command name, ignore extra args.
+                # Old approach: cmd=(builtin jobs -l ${(Q)cmd[2]})
+                #     weakness: shows all matching jobs on the title, not just one
+                title "${jobtexts[${cmd[2]#%}]%% *}" "$termtitle $jobtexts[${cmd[2]#%}]"
+            fi
+            ;;
+        %*) title "${jobtexts[${cmd[1]#%}]% *}" "$termtitle $jobtexts[${cmd[1]#%}]"
+            ;;
+        exec|sudo) shift cmd
+            # If the command is 'exec', drop that, because
+            # we'd rather just see the command that is being
+            # exec'd. Note the ;& to fall through the next entry.
+            ;& 
+        *=*) shift cmd;&
+        *)  title $cmd[1]:t "$termtitle $cmd[*]"    # Starting a new job.
+            ;;
+        esac
+}
+
+# Enable these functions
+precmd_functions+=(__idle_termtitle)
+preexec_functions+=(__running_termtitle)
+
+###
+# Catch SIGWINCH to re-print COLSxLINES
+trap __idle_termtitle 28
+
+# vim: ft=zsh:ts=4:sw=4:et

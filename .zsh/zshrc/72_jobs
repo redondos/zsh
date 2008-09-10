@@ -1,0 +1,8 @@
+#
+# Show running jobs
+#
+
+__running_jobs() {
+    [[ -o interactive && -z $NRJ ]] && jobs -l;
+}
+

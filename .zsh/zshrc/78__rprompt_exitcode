@@ -1,0 +1,15 @@
+#
+# __rprompt_exitcode
+#
+
+__rprompt_exitcode() {
+    if ((__rprompt_exitcode)); then
+        # Exit code if != 0
+        # RPROMPT+="%(?..%{${fg[red]}%}(%?%)%{${fg[default]}%} )"
+        RPROMPT+=" %(?..%{${fg[red]}%}%?%{${fg[default]}%} )"
+    fi
+}
+
+precmd_functions+=(__rprompt_exitcode)
+
+# vim: ft=zsh:ts=4:sw=4:et

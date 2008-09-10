@@ -1,0 +1,10 @@
+#
+# Run these commands when changing directories
+#
+
+__chpwd_ls() {
+	ls -l
+}
+
+chpwd_functions+=(__chpwd_ls)
+

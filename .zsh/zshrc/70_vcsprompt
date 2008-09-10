@@ -1,0 +1,234 @@
+# zshrc/60_vcsprompt
+#
+# Make git information available to the prompt
+#
+# Copyright © 1994–2008 martin f. krafft <madduck@madduck.net>
+# Released under the terms of the Artistic Licence 2.0
+#
+# Source repository: git://git.madduck.net/etc/zsh.git
+#
+# Shamelessly based on http://glandium.org/blog/?p=170
+#
+
+__git_get_reporoot()
+{
+  # return the full path to the root of the current git repository
+  [ -d "$GIT_DIR" ] && echo "$GIT_DIR" && return 0
+  local relroot
+  relroot="$(git rev-parse --show-cdup 2>/dev/null)" || return 1
+  if [ -n "$relroot" ]; then
+    readlink -f "$relroot"
+  else
+    echo $PWD
+  fi
+}
+
+__git_get_branch()
+{
+  # return the name of the git branch we're on
+  local ref
+  ref=$(git symbolic-ref -q HEAD 2>/dev/null \
+     || git-name-rev --name-only HEAD 2>/dev/null) || return 1
+  echo "${ref#refs/heads/}"
+}
+
+__git_print_preprompt()
+{
+  local output
+  output=(${(f):-"$(git diff --stat --relative)"})
+  if [[ ${#output} -gt 1 ]]; then
+    echo changes on filesystem:
+    print "${(F)output[1,-2]}"
+  fi
+  output=(${(f):-"$(git diff --cached --stat --relative)"})
+  if [[ ${#output} -gt 1 ]]; then
+    echo cached/staged changes:
+    print "${(F)output[1,-2]}"
+  fi
+}
+
+__hg_get_reporoot()
+{
+  hg root
+}
+
+__hg_get_branch()
+{
+  echo "hg:$(hg branch)"
+}
+
+__bzr_get_reporoot()
+{
+  local reporoot
+  reporoot="$(bzr info | sed -rne 's, *branch root: ,,p')"
+  case "$reporoot" in
+    .) echo "$PWD";;
+    *) echo "$reporoot";;
+  esac
+}
+
+__bzr_get_branch()
+{
+  local branch revno
+  bzr version-info | while read i j; do
+      case "$i" in
+        revno:) revno="$j";;
+        branch-nick:) branch="$j";;
+      esac
+    done
+  echo "bzr:${branch}@$revno"
+}
+
+__vcs_get_repo_type()
+{
+  # return the type of the closest repository in the path hierarchy
+  local dir
+  while true; do
+    [ -d ${dir}.git ] && echo git && break
+    [ -d "$GIT_DIR" ] && echo git && break
+    [ -d ${dir}.bzr ] && echo bzr && break
+    [ -d ${dir}.hg ] && echo hg && break
+    [ "$(readlink -f ${dir:-.})" = / ] && echo NONE && break
+    dir="../$dir"
+  done
+}
+
+__vcs_get_prompt_path_components()
+{
+  # return formatted path components (prefix branch postfix) given
+  # the repository root and the branch.
+
+  # shortcut: if there are no arguments, return a default prompt
+  if [ -z "${1:-}" ]; then
+    pwdnamed="${(%):-%${_PROMPT_PATH_MAXLEN}<..<%~%<<}"
+    echo "$pwdnamed"
+    return
+  fi
+
+  local reporoot branch
+  reporoot="${1%%/}"
+  branch="$2"
+
+  # replace named directories in the PWD, we need thi for the proper component
+  # count later
+  local pwdnamed
+  pwdnamed="${(%):-%~}"
+
+  # store paths in arrays for component count calculation
+  typeset -la apwd apwdnamed areporoot
+  apwd=(${(s:/:)PWD})
+  apwdnamed=(${(s:/:)pwdnamed})
+  areporoot=(${(s:/:)reporoot})
+
+  # get the number of leading and trailing path components. Since we're using
+  # %~ later and then /home/madduck suddenly becomes ~, which is 1, not
+  # 2 components, we calculate the leading component count by using the named
+  # path and the number of post components
+  local precomps postcomps
+  postcomps=$(($#apwd - $#areporoot))
+  precomps=$(($#apwdnamed - $postcomps))
+
+  local postfix
+  (( $postcomps > 0 )) && postfix="${(%):-%${postcomps}~}"
+
+  # we don't want the prompt to get too long, so keep the total prompt length
+  # under $_PROMPT_PATH_MAXLEN (25), but ensure that the prefix is not shorter
+  # than $_PROMPT_PATH_MINLEN (10), no matter what
+  local prelen minlen prefix
+  prelen=$((${_PROMPT_PATH_MAXLEN:-25} - $#branch - $#postfix))
+  minlen=${_PROMPT_PATH_MINLEN:-10}
+  (( $prelen < $minlen )) && prelen=$minlen
+  prefix="${(%):-%${prelen}<..<%-${precomps}~%<<}"
+
+  echo "'$prefix'" "'$branch'" "'$postfix'"
+}
+
+__vcs_set_prompt_variables()
+{
+  # set psvar[1..3] depending on repo type, or just psvar[1] if no repo found
+  local reporoot branch repotype
+  repotype="${1:-$(__vcs_get_repo_type)}"
+
+  case "$repotype" in
+    git)
+      reporoot="$(__git_get_reporoot)" ||
+        { error "could not determine git repository root"; return 1 }
+      branch="$(__git_get_branch)" ||
+        { error "could not determine git branch"; return 1 }
+      eval set -- $(__vcs_get_prompt_path_components "$reporoot" "$branch")
+      if [ -d "$GIT_DIR" ]; then
+        # poor man's replace until I find out how to do named dirs properly
+        # here:
+        local _D="${GIT_DIR/$HOME/~}"
+        set -- "$_D" "$2" "${${1#$_D}%/}"
+      fi
+      ;;
+    hg)
+      reporoot="$(__hg_get_reporoot)" ||
+        { error "could not determine hg repository root"; return 1 }
+      branch="$(__hg_get_branch)" ||
+        { error "could not determine hg branch"; return 1 }
+      eval set -- $(__vcs_get_prompt_path_components "$reporoot" "$branch")
+      ;;
+    bzr)
+      reporoot="$(__bzr_get_reporoot)" ||
+        { error "could not determine bzr repository root"; return 1 }
+      branch="$(__bzr_get_branch)" ||
+        { error "could not determine bzr branch"; return 1 }
+      eval set -- $(__vcs_get_prompt_path_components "$reporoot" "$branch")
+      ;;
+    *)
+      case "$repotype" in
+        NONE) :;;
+        *) warn "$repotype repositories not (yet) supported in the prompt";;
+      esac
+      local p="%${MAXLEN}<..<%~%<<"
+      #TODO find a better way so we don't have to nuke $psvar, but since the
+      #     %(nv.true.false) check for prompts checks element count, not
+      #     content, that's all we get for now
+      psvar=("${(%)p}")
+      return
+  esac
+
+  psvar[1,3]=($1 $2 $3)
+}
+
+__vcs_print_preprompt()
+{
+  local reporoot
+  repotype="${1:-$(__vcs_get_repo_type)}"
+
+  case "$repotype" in
+    git)
+      __git_print_preprompt
+      ;;
+  esac
+}
+
+if ! is_root; then
+  # too dangerous to be run as root
+
+  _update_vcs_prompt_vars_if_vcs_ran() {
+    local vcs="$(__vcs_get_repo_type)"
+    case "$(history $(($HISTCMD - 1)))" in
+      # $vcs appeared in last command, so be sure to update
+      *${vcs}*) __vcs_set_prompt_variables "$vcs"
+    esac
+  }
+  precmd_functions+=_update_vcs_prompt_vars_if_vcs_ran
+
+  _update_vcs_prompt_vars() {
+    __vcs_set_prompt_variables
+  }
+  chpwd_functions+=_update_vcs_prompt_vars
+
+  _print_preprompt() {
+    [[ $? -eq 0 ]] && __vcs_print_preprompt
+  }
+  precmd_functions+=_print_preprompt
+
+  # call it once
+  _update_vcs_prompt_vars
+fi
+
+# vim:ft=zsh
