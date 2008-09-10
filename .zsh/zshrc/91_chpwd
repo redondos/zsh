@@ -3,7 +3,7 @@
 #
 
 __chpwd_ls() {
-	ls -l
+	ls -lh
 }
 
 chpwd_functions+=(__chpwd_ls)
