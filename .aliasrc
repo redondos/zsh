@@ -24,6 +24,8 @@ alias f='find |grep'
 # alias grep='grepor'
 # alias grep='grep -ior'
 alias grep='grep --col -i'
+alias grepc='grep --color=always -i'
+alias lsc='ls --color=always'
 alias hoy='date +%F'
 alias locate='locate -i'
 alias mem="free -m"
