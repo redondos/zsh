@@ -58,7 +58,7 @@ alias man-suse="MANPATH=/home/redondos/.man/SuSE-8.2-i386 man"
 alias man-unix="MANPATH=/home/redondos/.man/v7man man"
 
 if [ "$TERM" != "dumb" ]; then
-	function ls() { command ls --color=always $*; }
+	function ls() { command ls --color=auto $*; }
 fi
 
 ## ls aliases
