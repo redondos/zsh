@@ -35,7 +35,7 @@ alias mv='mv -i'
 alias cp='cp -i'
 # alias tv='DISPLAY=:1.1'
 alias spkr="ALSA_CARD=1"
-alias mplayer-phone="mplayer -input ~/.mplayer/fifo"
+alias mplayer-phone="ALSA_CARD=1 mplayer -input file=$HOME/.mplayer/fifo"
 # grml's clean-prompt alias
 alias 0 &>/dev/null || functions 0 &>/dev/null || alias 0='return 0'
 alias rp='RPROMPT_ENABLED=1'
