@@ -4,7 +4,7 @@
 # Most bits from git://git.madduck.net/etc/zsh.git
 #
 
-if [ "${PS1:-}" = '%m%# ' ]; then
+# if [ "${PS1:-}" = '%m%# ' ]; then
   local _MIDDLE="%1v%(2v.|%B%2v%b|.)%(3v.%3v.)"
   if is_root; then
     _MIDDLE="%25<..<%~%<<"
@@ -18,7 +18,7 @@ if [ "${PS1:-}" = '%m%# ' ]; then
   _MACHINE_NAME="$_MACHINE_NAME${debian_chroot:+/%S$debian_chroot%s}"
 
   PS1="%(4L.+.)${_MACHINE_NAME}:${_MIDDLE}%# "
-fi
+# fi
 
 : ${RPS1:="#%(0?..%?,)%!"}
 
