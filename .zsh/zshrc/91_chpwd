@@ -7,4 +7,3 @@ __chpwd_ls() {
 }
 
 chpwd_functions+=(__chpwd_ls)
-
