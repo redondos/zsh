@@ -44,6 +44,7 @@ alias cdlocate='locate -i -d /var/lib/cds.db'
 alias lastlogs='find ~/.purple/logs -type f | grep -v system | xargs ls -ltr | tail'
 alias confcat="sed '/^\s*\([#;\"].*\)\?$/d'"
 alias scat='sed -n l'
+alias ubernice='sudo nice -n 20 ionice -c3 sudo -u $USER'
 
 ## Manpage havoc
 # alias man='man -P vi-pager.sh'
