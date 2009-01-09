@@ -105,7 +105,7 @@ function up-one-dir { set -E; pushd ..; set +E; zle redisplay; zle -M `pwd` }
 function back-one-dir { set -E; popd; set +E; zle redisplay; zle -M `pwd` }
 zle -N up-one-dir
 zle -N back-one-dir
-bindkey "^[-" up-one-dir
+bindkey "^[+" up-one-dir
 bindkey "^[=" back-one-dir
 
 ## expand-dot
