@@ -106,6 +106,9 @@ fi
 ## remove slashes from directory arguments
 zstyle ':completion:*' squeeze-slashes true
 
+## produce .. as a possible completion (add slash)
+zstyle ':completion:*' special-dirs ..
+
 ### Credits:
 ## Kiddle, Peek, & Stephenson. (2005). "From Bash to Z Shell". Apress.
 ## file:///usr/share/doc/zsh/examples/*
