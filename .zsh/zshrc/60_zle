@@ -183,4 +183,10 @@ show-date() { date; zle reset-prompt; }
 zle -N show-date
 bindkey '\ek' show-date
 
+## run-with-sudo
+## source: http://ft.bewatermyfriend.org/comp/zshtalk.html
+run-with-sudo () { LBUFFER="sudo $LBUFFER" }
+zle -N run-with-sudo
+bindkey '^X^E' run-with-sudo
+
 # vim:ft=zsh
