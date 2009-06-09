@@ -6,7 +6,8 @@
 
 # Debian
 alias apt-file-etch='apt-file --sources-list /etc/apt/sources.list.d/etch.list'
-alias apt-file='apt-file --sources-list /etc/apt/sources.list.d/lenny.list'
+alias apt-file-lenny='apt-file --sources-list /etc/apt/sources.list.d/lenny.list'
+alias apt-file='apt-file --sources-list /etc/apt/sources.list.d/unstable.list'
 alias apt-file-sid='apt-file --sources-list /etc/apt/sources.list.d/unstable.list'
 alias api='time sudo aptitude install'
 alias aps='aptitude search'
