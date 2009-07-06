@@ -1,0 +1,47 @@
+#
+# cdargs
+#
+# if cdargs is found, copy it to ~/tmp and apply a patch to adapt it to zsh
+# otherwise use local copy (probably outdated)
+#
+
+if [[ -f /usr/share/doc/cdargs/examples/cdargs-bash.sh ]]; then
+  cdargs=/usr/share/doc/cdargs/examples/cdargs-bash.sh
+  cdargs_zsh=~/tmp/cdargs-zsh.sh
+  command cp -f $cdargs ~/tmp
+  patch -d ~/tmp -p0 << EOPATCH &>/dev/null
+--- /usr/share/cdargs/cdargs-bash.sh	2008-08-12 04:00:46.000000000 -0400
++++ cdargs-bash.sh	2009-02-26 22:07:56.000000000 -0500
+@@ -11,6 +11,12 @@
+ CDARGS_SORT=0   # set to 1 if you want mark to sort the list
+ CDARGS_NODUPS=1 # set to 1 if you want mark to delete dups
+ 
++# Support ZSH via its BASH completion emulation
++if [ -n "$ZSH_VERSION" ]; then
++	autoload bashcompinit
++	bashcompinit
++fi
++
+ # --------------------------------------------- #
+ # Run the cdargs program to get the target      #
+ # directory to be used in the various context   #
+@@ -166,7 +172,7 @@
+     local tmpfile
+ 
+     # first clear any bookmarks with this same alias, if file exists
+-    if [[ "$CDARGS_NODUPS" && -e "$HOME/.cdargs" ]]; then
++    if [ "$CDARGS_NODUPS" ] && [ -e "$HOME/.cdargs" ]; then
+         tmpfile=`echo ${TEMP:-${TMPDIR:-/tmp}} | sed -e "s/\\/$//"`
+         tmpfile=$tmpfile/cdargs.$USER.$$.$RANDOM
+         grep -v "^$1 " "$HOME/.cdargs" > $tmpfile && 'mv' -f $tmpfile "$HOME/.cdargs";
+EOPATCH
+  mv -f ~/tmp/cdargs-bash.sh $cdargs_zsh
+  sed -i 's/# alias m/alias m/' $cdargs_zsh
+  # clean up rejects
+  rm -f ~/tmp/cdargs-bash*
+elif [[ -f $ZDOTDIR/functions/misc/cdargs-zsh ]]; then
+  cdargs_zsh=$ZDOTDIR/functions/misc/cdargs-zsh
+fi
+
+source $cdargs_zsh
+# vim: ft=zsh:ts=4:sw=4:et
