@@ -21,4 +21,12 @@ functions -u help-zshglob
 #    print '\e[91m'${(q)line}'\e[0m' > /dev/tty; 
 #done &)
 
+## avoid correcting
+alias mv='nocorrect mv'
+alias cp='nocorrect cp'
+alias ln='nocorrect ln'
+alias mkdir='nocorrect mkdir'
+alias rm='nocorrect rm'
+
+
 # vim:ft=zsh

@@ -167,6 +167,32 @@ bindkey '^Xl' set-local-history
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\ee' edit-command-line
+_insert_datestamp() { LBUFFER+=${(%):-'%D{%Y.%m.%d}'}:; }
+zle -N insert-datestamp _insert_datestamp
+bindkey '\et' insert-datestamp
+
+## prefix search (up to cursor position)
+autoload history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end  history-search-end
+bindkey "\e[5~" history-beginning-search-backward-end # PageUp
+bindkey "\e[6~" history-beginning-search-forward-end  # PageDown
+
+## automatically escape URLs
+# /usr/share/zsh*/functions/Zle/url-quote-magic
+autoload -U url-quote-magic
+zle -N self-insert url-quote-magic
+setopt no_nomatch
+
+## alt-m for last typed word
+_insert_last_typed_word() { zle insert-last-word -- 0 -1 };
+zle -N _insert_last_typed_word;
+bindkey "\em" _insert_last_typed_word
+
+## jump behind the first word on the cmdline to add options
+function _jump_after_first_word() {
+    local words
+    words=(${(z)BUFFER})
 
 ## alt-/ completes words from older commands
 bindkey '\e/' _history-complete-older
@@ -188,5 +214,15 @@ bindkey '\ek' show-date
 run-with-sudo () { LBUFFER="sudo $LBUFFER" }
 zle -N run-with-sudo
 bindkey '^X^E' run-with-sudo
+
+
+    if (( ${#words} <= 1 )) ; then
+        CURSOR=${#BUFFER}
+    else
+        CURSOR=${#${words[1]}}
+    fi
+}
+zle -N _jump_after_first_word
+bindkey '^x1' _jump_after_first_word
 
 # vim:ft=zsh

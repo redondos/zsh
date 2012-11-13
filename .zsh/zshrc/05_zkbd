@@ -8,7 +8,7 @@
 ## A file is created by calling zkbd if there doesn't exist one for the current
 ##triple: $TERM-$VENDOR-$OSTYPE
 
-autoload zkbd && [[ ! -f ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE ]] && zkbd
+autoload zkbd # && [[ ! -f ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE ]] && zkbd
 [[ -f ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE ]] && source ~/.zsh/zkbd/$TERM-$VENDOR-$OSTYPE || source ~/.zsh/zkbd/xterm-$VENDOR-$OSTYPE
 
 # vim:ft=zsh

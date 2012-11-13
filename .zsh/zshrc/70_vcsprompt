@@ -26,24 +26,27 @@ __git_get_reporoot()
 __git_get_branch()
 {
   # return the name of the git branch we're on
-  local ref
-  ref=$(git symbolic-ref -q HEAD 2>/dev/null \
-     || git-name-rev --name-only HEAD 2>/dev/null) || return 1
+  local ref gitdir
+  gitdir="$(git rev-parse --git-dir)"
+  ref=$(git --git-dir="$gitdir" symbolic-ref -q HEAD 2>/dev/null \
+     || git --git-dir="$gitdir" name-rev --name-only HEAD 2>/dev/null) || return 1
   echo "${ref#refs/heads/}"
 }
 
 __git_print_preprompt()
 {
+  [ "$(git config --get core.bare)" = false ] || return
+
   local output
-  output=(${(f):-"$(git diff --stat --relative)"})
+  output=(${(f):-"$(git diff --stat --relative 2>/dev/null)"})
   if [[ ${#output} -gt 1 ]]; then
     echo changes on filesystem:
-    print "${(F)output[1,-2]}"
+    print "${${(F)output[1,-2]}//\.\.\./…}"
   fi
-  output=(${(f):-"$(git diff --cached --stat --relative)"})
+  output=(${(f):-"$(git diff --cached --stat --relative 2>/dev/null)"})
   if [[ ${#output} -gt 1 ]]; then
     echo cached/staged changes:
-    print "${(F)output[1,-2]}"
+    print "${${(F)output[1,-2]}//\.\.\./…}"
   fi
 }
 
@@ -100,7 +103,7 @@ __vcs_get_prompt_path_components()
 
   # shortcut: if there are no arguments, return a default prompt
   if [ -z "${1:-}" ]; then
-    pwdnamed="${(%):-%${_PROMPT_PATH_MAXLEN}<..<%~%<<}"
+    pwdnamed="${(%):-%${_PROMPT_PATH_MAXLEN}<…<%~%<<}"
     echo "$pwdnamed"
     return
   fi
@@ -138,7 +141,7 @@ __vcs_get_prompt_path_components()
   prelen=$((${_PROMPT_PATH_MAXLEN:-25} - $#branch - $#postfix))
   minlen=${_PROMPT_PATH_MINLEN:-10}
   (( $prelen < $minlen )) && prelen=$minlen
-  prefix="${(%):-%${prelen}<..<%-${precomps}~%<<}"
+  prefix="${(%):-%${prelen}<…<%-${precomps}~%<<}"
 
   echo "'$prefix'" "'$branch'" "'$postfix'"
 }
@@ -182,7 +185,7 @@ __vcs_set_prompt_variables()
         NONE) :;;
         *) warn "$repotype repositories not (yet) supported in the prompt";;
       esac
-      local p="%${MAXLEN}<..<%~%<<"
+      local p="%${MAXLEN}<…<%~%<<"
       #TODO find a better way so we don't have to nuke $psvar, but since the
       #     %(nv.true.false) check for prompts checks element count, not
       #     content, that's all we get for now

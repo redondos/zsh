@@ -109,6 +109,27 @@ zstyle ':completion:*' squeeze-slashes true
 ## produce .. as a possible completion (add slash)
 zstyle ':completion:*' special-dirs ..
 
+## commands that take commands as arguments
+compdef _precommand gdb
+compdef _precommand nohup
+compdef _precommand strace
+
+# http://madism.org/~madcoder/dotfiles/zsh/40_completion
+zstyle ':completion:*:processes' command 'ps -au$USER -o pid,time,cmd|grep -v "ps -au$USER -o pid,time,cmd"'
+
+# commands that take commands as arguments
+compdef _precommand gdb
+compdef _precommand nohup
+compdef _precommand strace
+
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'no matches for: %d'
+zstyle ':completion:*' group-name ''
+
+# #527301
+zstyle :completion::complete:xmms2:\*:values list-grouped false
 ### Credits:
 ## Kiddle, Peek, & Stephenson. (2005). "From Bash to Z Shell". Apress.
 ## file:///usr/share/doc/zsh/examples/*

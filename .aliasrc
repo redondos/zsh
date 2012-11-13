@@ -85,6 +85,16 @@ alias vdir='lsor=auto --format=long'
 [ -d "$HOME/tmp" ] 		&& hash -d tmp="$HOME/tmp"
 [ -d "$HOME/.irss"ilogs ] 	&& hash -d irc="$HOME/.irssi/logs"
 
+## avoid globs
+alias find='noglob find'
+alias w3m='noglob w3m -no-mouse'
+alias links='noglob links'
+alias wb='noglob www-browser'
+alias wget='noglob wget'
+alias curl='noglob curl'
+alias apt-cache='noglob apt-cache'
+alias locate='noglob locate'
+
 ## other aliases
 alias mtr='mtr -t'
 
