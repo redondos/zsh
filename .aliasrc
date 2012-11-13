@@ -69,6 +69,7 @@ fi
 eval "`dircolors -b`"
 # alias l='ls -CFh'
 alias dir='ls --format=vertical'
+alias ls='ls --col'
 alias l='ls -lhF'
 alias la='ls -AhF'
 alias ll='ls -lhFa'
@@ -83,5 +84,8 @@ alias vdir='lsor=auto --format=long'
 [ -d "$HOME/mp3" ] 		&& hash -d mp3="$HOME/mp3"
 [ -d "$HOME/tmp" ] 		&& hash -d tmp="$HOME/tmp"
 [ -d "$HOME/.irss"ilogs ] 	&& hash -d irc="$HOME/.irssi/logs"
+
+## other aliases
+alias mtr='mtr -t'
 
 # vim: syntax=sh
