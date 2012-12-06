@@ -167,9 +167,10 @@ bindkey '^Xl' set-local-history
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\ee' edit-command-line
-_insert_datestamp() { LBUFFER+=${(%):-'%D{%Y.%m.%d}'}:; }
-zle -N insert-datestamp _insert_datestamp
-bindkey '\et' insert-datestamp
+
+# _insert_datestamp() { LBUFFER+=${(%):-'%D{%Y.%m.%d}'}:; }
+# zle -N insert-datestamp _insert_datestamp
+# bindkey '\et' insert-datestamp
 
 ## prefix search (up to cursor position)
 autoload history-search-end
