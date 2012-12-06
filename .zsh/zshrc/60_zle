@@ -226,4 +226,13 @@ bindkey '^X^E' run-with-sudo
 zle -N _jump_after_first_word
 bindkey '^x1' _jump_after_first_word
 
+## sudo-clear-credentials
+sudo-clear-credentials() {
+    sudo -k
+    # zle -R display-string 'sudo credentials cleared'
+    zle -M 'sudo: credentials cleared'
+}
+zle -N sudo-clear-credentials
+bindkey '\ek' sudo-clear-credentials
+
 # vim:ft=zsh
