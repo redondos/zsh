@@ -125,6 +125,9 @@ setopt HIST_NO_STORE
 ## Add | to history redirections
 setopt HIST_ALLOW_CLOBBER
 
+## Don't save commands that start with space
+setopt HIST_IGNORE_SPACE
+
 ##---------------------------
 ## Initialisation
 ##---------------------------
