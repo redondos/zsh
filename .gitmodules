@@ -1,0 +1,3 @@
+[submodule "custom"]
+	path = custom
+	url = https://github.com/redondos/oh-my-zsh-custom.git
