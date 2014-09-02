@@ -1,7 +1,0 @@
-expand-o -complete-with-dots(){
-	echo -n "..."
-	zle expand-or-complete
-	zle redisplay
-}
-# zle -N expand-or-complete-with-dots
-# bindkey "^I" expand-or-complete-with-dots

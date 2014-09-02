@@ -1,5 +1,0 @@
-local ret=1
-if [[ -z $BUFFER ]]; then
-	_files && ret=0
-fi
-return $ret

@@ -1,5 +1,0 @@
-setopt EXTENDED_GLOB
-for file in $ZDOTDIR/${${(%):-%1N}#.}/*~*disabled; do
-	. $file
-done
-

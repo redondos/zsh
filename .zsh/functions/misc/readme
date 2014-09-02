@@ -1,4 +1,0 @@
-readme() {
-  less -- (#ia3)${~0}*(OL[1,3])
-}
-# source: http://ft.bewatermyfriend.org/comp/zshtalk.html

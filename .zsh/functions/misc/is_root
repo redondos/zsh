@@ -1,4 +1,0 @@
-is_root() {
-  test ${EUID:?} -eq 0
-}
-

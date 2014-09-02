@@ -1,9 +1,0 @@
-#
-# __cleanup_rprompt
-#
-
-__cleanup_rprompt() {
-	RPROMPT=""
-}
-precmd_functions+=(__cleanup_rprompt)
-

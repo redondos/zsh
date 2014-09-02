@@ -1,6 +1,0 @@
-## Only unique entries
-typeset -U path
-
-# Environment shared with other shells
-[[ -r ~/.envrc ]] && . ~/.envrc
-

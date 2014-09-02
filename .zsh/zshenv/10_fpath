@@ -1,9 +1,0 @@
-#
-# $fpath
-#
-
-[[ -d ~/.zsh_functions.d ]] && fpath=(~/.zsh_functions.d $fpath)
-[[ -d ~/.zsh/functions ]] && for dir in ~/.zsh/functions/**/*(/); do nfpath+=($dir); done
-fpath=($nfpath $fpath)
-
-# vim:ft=zsh

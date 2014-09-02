@@ -1,6 +1,0 @@
-# http://rusmafia.org/linux/zsh-parent-dir-expand
-if [[ $LBUFFER = *.. ]]; then
-    LBUFFER+=/..
-else
-    LBUFFER+=.
-fi
